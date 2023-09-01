@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "WhisperCppCli": {
+      "commandName": "Project",
+      "commandLineArgs": "-m \"Z:\\Models\\whisper\\ggml-model-whisper-medium.en-q5_0.bin\" -f \"X:\\Code\\Personal\\Library\\whisper.cpp\\samples\\jfk.wav\"  --output-subtitle"
+    }
+  }
+}

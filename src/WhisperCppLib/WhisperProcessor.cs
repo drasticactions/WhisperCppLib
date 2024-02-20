@@ -33,7 +33,7 @@ public class WhisperProcessor : IAsyncDisposable, IDisposable
 
     public event OnSegmentEventHandler? OnSegmentEventHandler;
 
-    public event OnProgressHandler OnProgressHandler;
+    public event OnProgressHandler? OnProgressHandler;
 
     public event OnEncoderBeginEventHandler? OnEncoderBeginEventHandlers;
 

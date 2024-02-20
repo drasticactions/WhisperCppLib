@@ -15,17 +15,23 @@ public static class WhisperCppInterop
     private const string libraryName = $"libwhisper";
 #endif
 
-    [DllImport(libraryName, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    public static extern IntPtr whisper_init_from_file(string path);
+    [DllImport(libraryName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr whisper_init_from_file_with_params(string path_model, WhisperContextParams parameters);
 
-    [DllImport(libraryName, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    public static extern IntPtr whisper_init_from_buffer(IntPtr buffer, UIntPtr buffer_size);
+    [DllImport(libraryName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr whisper_init_from_buffer_with_params(IntPtr buffer, UIntPtr buffer_size, WhisperContextParams parameters);
 
-    [DllImport(libraryName, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    public static extern IntPtr whisper_init_from_file_no_state(string path);
+    [DllImport(libraryName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr whisper_init_with_params(IntPtr loader, WhisperContextParams parameters);
 
-    [DllImport(libraryName, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    public static extern IntPtr whisper_init_from_buffer_no_state(IntPtr buffer, UIntPtr buffer_size);
+    [DllImport(libraryName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr whisper_init_from_file_with_params_no_state(string path_model, WhisperContextParams parameters);
+
+    [DllImport(libraryName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr whisper_init_from_buffer_with_params_no_state(IntPtr buffer, UIntPtr buffer_size, WhisperContextParams parameters);
+
+    [DllImport(libraryName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr whisper_init_with_params_no_state(IntPtr loader, WhisperContextParams parameters);
 
     [DllImport(libraryName, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     public static extern void whisper_free(IntPtr context);
@@ -104,6 +110,15 @@ public static class WhisperCppInterop
     public static extern int whisper_full_lang_id_from_state(IntPtr state);
 }
 
+// Define the structure for whisper_context_params
+[StructLayout(LayoutKind.Sequential)]
+public struct WhisperContextParams
+{
+    [MarshalAs(UnmanagedType.U1)]
+    public bool use_gpu;
+    public int gpu_device;
+}
+
 public enum WhisperSamplingStrategy
 {
     StrategyGreedy,      // GreedyDecoder
@@ -158,6 +173,8 @@ public struct WhisperFullParams
 
     // Do not use past transcription (if any) as prompt for the decoder
     public byte NoContext;
+
+    public byte NoTimestamps;
 
     //force single segment output (useful for streaming)
     public byte SingleSegment;
@@ -267,6 +284,30 @@ public struct WhisperFullParams
     public IntPtr LogitsFilterCallback;
 
     public IntPtr LogitsFilterCallbackData;
+
+    public WhisperGrammarElement GrammarRules;
+    public UIntPtr NGrammerRules;
+    public UIntPtr i_start_rule;
+    public float grammar_penalty;
+}
+
+
+public enum WhisperGreType
+{
+    WhisperGreTypeEnd = 0,
+    WhisperGreTypeAlt = 1,
+    WhisperGreTypeRuleRef = 2,
+    WhisperGreTypeChar = 3,
+    WhisperGreTypeCharNot = 4,
+    WhisperGreTypeCharRngUpper = 5,
+    WhisperGreTypeCharAlt = 6
+}
+
+[StructLayout(LayoutKind.Sequential)]
+public struct WhisperGrammarElement
+{
+    public WhisperGreType type;
+    public uint value;
 }
 
 [StructLayout(LayoutKind.Sequential)]

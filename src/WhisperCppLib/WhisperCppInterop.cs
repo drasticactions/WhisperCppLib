@@ -9,11 +9,7 @@ namespace WhisperCppLib;
 
 public static class WhisperCppInterop
 {
-#if WINDOWS
-    private const string libraryName = $"whisper";
-#elif LINUX || MACOS
-    private const string libraryName = $"libwhisper";
-#endif
+    private const string libraryName = "whisper";
 
     [DllImport(libraryName, CallingConvention = CallingConvention.Cdecl)]
     public static extern IntPtr whisper_init_from_file_with_params(string path_model, WhisperContextParams parameters);

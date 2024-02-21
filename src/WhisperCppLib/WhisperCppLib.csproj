@@ -6,12 +6,6 @@
 		<Nullable>enable</Nullable>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<IsAotCompatible>true</IsAotCompatible>
-		<IsWindows>true</IsWindows>
-		<IsMac>false</IsMac>
-		<IsLinux>false</IsLinux>
-		<DefineConstants Condition="$(IsWindows)">WINDOWS</DefineConstants>
-		<DefineConstants Condition="$(IsMac)">LINUX</DefineConstants>
-		<DefineConstants Condition="$(IsLinux)">MACOS</DefineConstants>
 	</PropertyGroup>
 
 </Project>

@@ -10,12 +10,22 @@ using System.Text.RegularExpressions;
 
 namespace WhisperCppCli.Models
 {
+    /// <summary>
+    /// Represents an SRT subtitle.
+    /// </summary>
     public class SrtSubtitle : ISubtitle
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SrtSubtitle"/> class.
+        /// </summary>
         public SrtSubtitle()
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SrtSubtitle"/> class with the specified subtitle.
+        /// </summary>
+        /// <param name="subtitle">The subtitle text.</param>
         public SrtSubtitle(string subtitle)
         {
             string[] subtitleLines = Regex.Split(subtitle, @"^\s*$", RegexOptions.Multiline);

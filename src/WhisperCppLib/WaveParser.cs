@@ -1,15 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿// <copyright file="WaveParser.cs" company="Drastic Actions">
+// Copyright (c) Drastic Actions. All rights reserved.
+// </copyright>
+
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace WhisperCppLib;
 
+/// <summary>
+/// Represents a parser for Wave files.
+/// </summary>
 public class WaveParser
 {
-    private static readonly byte[] expectedSubFormatForPcm = new byte[] { 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x00, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71 };
+    private static readonly byte[] ExpectedSubFormatForPcm = new byte[] { 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x00, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71 };
     private readonly Stream waveStream;
     private ushort channels;
     private uint sampleRate;
@@ -18,6 +20,10 @@ public class WaveParser
     private long dataChunkPosition;
     private bool isInitialized;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WaveParser"/> class.
+    /// </summary>
+    /// <param name="waveStream">The stream containing the Wave file.</param>
     public WaveParser(Stream waveStream)
     {
         this.waveStream = waveStream;
@@ -26,86 +32,67 @@ public class WaveParser
     /// <summary>
     /// Gets the number of channels in the current wave file.
     /// </summary>
-    /// <remarks>
-    /// It is populated only after the initialization.
-    /// </remarks>
-    public ushort Channels => channels;
+    public ushort Channels => this.channels;
 
     /// <summary>
     /// Gets the Sample Rate in the current wave file.
     /// </summary>
-    /// <remarks>
-    /// It is populated only after the initialization.
-    /// </remarks>
-    public uint SampleRate => sampleRate;
+    public uint SampleRate => this.sampleRate;
 
     /// <summary>
     /// Gets the Bits Per Sample in the current wave file.
     /// </summary>
-    /// <remarks>
-    /// It is populated only after the initialization.
-    /// </remarks>
-    public ushort BitsPerSample => bitsPerSample;
+    public ushort BitsPerSample => this.bitsPerSample;
 
     /// <summary>
     /// Gets the size of the data chunk in the current wave file.
     /// </summary>
-    /// <remarks>
-    /// It is populated only after the initialization.
-    /// </remarks>
-    public uint DataChunkSize => dataChunkSize;
+    public uint DataChunkSize => this.dataChunkSize;
 
     /// <summary>
     /// Gets the position of the data chunk in the current wave file.
     /// </summary>
-    /// <remarks>
-    /// It is populated only after the initialization.
-    /// </remarks>
-    public long DataChunkPosition => dataChunkPosition;
+    public long DataChunkPosition => this.dataChunkPosition;
 
     /// <summary>
     /// Gets a value indicating whether the wave parser is initialized.
     /// </summary>
-    public bool IsInitialized => isInitialized;
+    public bool IsInitialized => this.isInitialized;
 
     /// <summary>
     /// Gets the number of samples for each channel in the current wave file.
     /// </summary>
-    /// <remarks>
-    /// It is populated only after the initialization.
-    /// </remarks>
-    public long SamplesCount => dataChunkSize / (bitsPerSample / 8) / channels;
+    public long SamplesCount => this.dataChunkSize / (this.bitsPerSample / 8) / this.channels;
 
     /// <summary>
     /// Gets the size of a single frame in the current wave file.
     /// </summary>
-    /// <remarks>
-    /// It is populated only after the initialization and it is equal to <see cref="BitsPerSample"/> / 8 * <see cref="Channels"/>.
-    /// </remarks>
-    public int FrameSize => bitsPerSample / 8 * channels;
+    public int FrameSize => this.bitsPerSample / 8 * this.channels;
 
     /// <summary>
     /// Gets the value to divide the sample by to get the actual float value.
     /// </summary>
-    public float ValueToDivide => bitsPerSample switch
+    public float ValueToDivide => this.bitsPerSample switch
     {
         8 => 128.0f,
         16 => 32768.0f,
         24 => 8388608.0f,
-        _ => 2147483648.0f
+        _ => 2147483648.0f,
     };
 
     /// <summary>
-    /// Returns the average samples from all channels.
+    /// Returns the average samples from all channels asynchronously.
     /// </summary>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>An array of average samples.</returns>
     public async Task<float[]> GetAvgSamplesAsync(CancellationToken cancellationToken = default)
     {
-        await InitializeAsync(cancellationToken);
+        await this.InitializeAsync(cancellationToken);
 
-        var samples = new float[SamplesCount];
+        var samples = new float[this.SamplesCount];
 
         var sampleIndex = 0;
-        await foreach (var sampleFrame in InternalReadSamples(useAsync: true, cancellationToken))
+        await foreach (var sampleFrame in this.InternalReadSamples(useAsync: true, cancellationToken))
         {
             var sampleSum = 0L;
             for (var i = 0; i < sampleFrame.Length; i++)
@@ -113,24 +100,24 @@ public class WaveParser
                 sampleSum += sampleFrame[i];
             }
 
-            samples[sampleIndex++] = (sampleSum / ValueToDivide) / channels;
+            samples[sampleIndex++] = (sampleSum / this.ValueToDivide) / this.channels;
         }
+
         return samples;
     }
 
     /// <summary>
-    /// Returns the average samples from all channels.
+    /// Returns the average samples from all channels synchronously.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>An array of average samples.</returns>
     public float[] GetAvgSamples()
     {
-        Initialize();
+        this.Initialize();
 
-        var asyncEnumerator = InternalReadSamples(useAsync: false, CancellationToken.None).GetAsyncEnumerator();
-        var samples = new float[SamplesCount];
+        var asyncEnumerator = this.InternalReadSamples(useAsync: false, CancellationToken.None).GetAsyncEnumerator();
+        var samples = new float[this.SamplesCount];
         var sampleIndex = 0;
-        // Will disable CA2012 as I took care of the async enumerator to always run synchronous if useAsync is false.
-#pragma warning disable CA2012 // Use ValueTasks correctly
+
         while (asyncEnumerator.MoveNextAsync().GetAwaiter().GetResult())
         {
             var sampleFrame = asyncEnumerator.Current;
@@ -140,102 +127,114 @@ public class WaveParser
                 sampleSum += sampleFrame[i];
             }
 
-            samples[sampleIndex++] = (sampleSum / ValueToDivide) / channels;
-        }
-#pragma warning restore CA2012 // Use ValueTasks correctly
-        return samples;
-    }
-
-    public float[] GetChannelSamples(int channelIndex = 0)
-    {
-        Initialize();
-        if (channelIndex >= channels)
-        {
-            throw new ArgumentOutOfRangeException(nameof(channelIndex));
+            samples[sampleIndex++] = (sampleSum / this.ValueToDivide) / this.channels;
         }
 
-        var samples = new float[SamplesCount];
-        var sampleIndex = 0;
-
-        var asyncEnumerator = InternalReadSamples(useAsync: false, CancellationToken.None).GetAsyncEnumerator();
-        // Will disable CA2012 as I took care of the async enumerator to always run synchronous if useAsync is false.
-#pragma warning disable CA2012 // Use ValueTasks correctly
-        while (asyncEnumerator.MoveNextAsync().GetAwaiter().GetResult())
-        {
-            var sampleFrame = asyncEnumerator.Current;
-            samples[sampleIndex++] = sampleFrame[channelIndex] / ValueToDivide;
-        }
-#pragma warning restore CA2012 // Use ValueTasks correctly
-        return samples;
-    }
-
-    public async Task<float[]> GetChannelSamplesAsync(int channelIndex = 0, CancellationToken cancellationToken = default)
-    {
-        await InitializeAsync(cancellationToken);
-        if (channelIndex >= channels)
-        {
-            throw new ArgumentOutOfRangeException(nameof(channelIndex));
-        }
-
-        var samples = new float[SamplesCount];
-        var sampleIndex = 0;
-
-        await foreach (var sampleFrame in InternalReadSamples(useAsync: true, cancellationToken))
-        {
-            samples[sampleIndex++] = sampleFrame[channelIndex] / ValueToDivide;
-        }
         return samples;
     }
 
     /// <summary>
-    /// Initializes the wave parser, by reading the header and the format chunk.
+    /// Returns the samples from a specific channel synchronously.
+    /// </summary>
+    /// <param name="channelIndex">The index of the channel.</param>
+    /// <returns>An array of samples from the specified channel.</returns>
+    public float[] GetChannelSamples(int channelIndex = 0)
+    {
+        this.Initialize();
+        if (channelIndex >= this.channels)
+        {
+            throw new ArgumentOutOfRangeException(nameof(channelIndex));
+        }
+
+        var samples = new float[this.SamplesCount];
+        var sampleIndex = 0;
+
+        var asyncEnumerator = this.InternalReadSamples(useAsync: false, CancellationToken.None).GetAsyncEnumerator();
+
+        while (asyncEnumerator.MoveNextAsync().GetAwaiter().GetResult())
+        {
+            var sampleFrame = asyncEnumerator.Current;
+            samples[sampleIndex++] = sampleFrame[channelIndex] / this.ValueToDivide;
+        }
+
+        return samples;
+    }
+
+    /// <summary>
+    /// Returns the samples from a specific channel asynchronously.
+    /// </summary>
+    /// <param name="channelIndex">The index of the channel.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>An array of samples from the specified channel.</returns>
+    public async Task<float[]> GetChannelSamplesAsync(int channelIndex = 0, CancellationToken cancellationToken = default)
+    {
+        await this.InitializeAsync(cancellationToken);
+        if (channelIndex >= this.channels)
+        {
+            throw new ArgumentOutOfRangeException(nameof(channelIndex));
+        }
+
+        var samples = new float[this.SamplesCount];
+        var sampleIndex = 0;
+
+        await foreach (var sampleFrame in this.InternalReadSamples(useAsync: true, cancellationToken))
+        {
+            samples[sampleIndex++] = sampleFrame[channelIndex] / this.ValueToDivide;
+        }
+
+        return samples;
+    }
+
+    /// <summary>
+    /// Initializes the wave parser by reading the header and the format chunk synchronously.
     /// </summary>
     public void Initialize()
     {
-        InternalInitialize(useAsync: false, CancellationToken.None).GetAwaiter().GetResult();
+        this.InternalInitialize(useAsync: false, CancellationToken.None).GetAwaiter().GetResult();
     }
 
     /// <summary>
-    /// Initializes the wave parser, by reading the header and the format chunk in an async manner.
+    /// Initializes the wave parser by reading the header and the format chunk asynchronously.
     /// </summary>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     public Task InitializeAsync(CancellationToken cancellationToken = default)
     {
-        return InternalInitialize(useAsync: true, cancellationToken);
+        return this.InternalInitialize(useAsync: true, cancellationToken);
     }
 
     private async IAsyncEnumerable<long[]> InternalReadSamples(bool useAsync, [EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        var buffer = new byte[2048 * channels];
+        var buffer = new byte[2048 * this.channels];
         var memoryBuffer = buffer.AsMemory();
 
         var sampleIndex = 0;
         var bytesRead = int.MaxValue;
 
-        while (bytesRead > 0 && sampleIndex < SamplesCount)
+        while (bytesRead > 0 && sampleIndex < this.SamplesCount)
         {
-            // We need to ensure that we don't read from the stream, more data than the data filled by samples count.
-            var maxBytesToRead = (int)Math.Min(buffer.Length, (SamplesCount - sampleIndex) * FrameSize);
+            var maxBytesToRead = (int)Math.Min(buffer.Length, (this.SamplesCount - sampleIndex) * this.FrameSize);
             if (useAsync)
             {
 #if NET6_0_OR_GREATER
                 var memoryToUse = maxBytesToRead == buffer.Length ? memoryBuffer : memoryBuffer[..maxBytesToRead];
-                bytesRead = await waveStream.ReadAsync(memoryToUse, cancellationToken);
+                bytesRead = await this.waveStream.ReadAsync(memoryToUse, cancellationToken);
 #else
                 bytesRead = await waveStream.ReadAsync(buffer, 0, maxBytesToRead, cancellationToken);
 #endif
             }
             else
             {
-                bytesRead = waveStream.Read(buffer, 0, maxBytesToRead);
+                bytesRead = this.waveStream.Read(buffer, 0, maxBytesToRead);
             }
 
             for (var i = 0; i < bytesRead;)
             {
-                var currentSamples = new long[channels];
+                var currentSamples = new long[this.channels];
 
-                for (var currentChannel = 0; currentChannel < channels; currentChannel++)
+                for (var currentChannel = 0; currentChannel < this.channels; currentChannel++)
                 {
-                    var (currentChannelValue, bytesConsumed) = bitsPerSample switch
+                    var (currentChannelValue, bytesConsumed) = this.bitsPerSample switch
                     {
                         8 => (buffer[i] - 128, 1),
                         16 => (BitConverter.ToInt16(buffer, i), 2),
@@ -245,11 +244,13 @@ public class WaveParser
                     currentSamples[currentChannel] = currentChannelValue;
                     i += bytesConsumed;
                 }
+
                 yield return currentSamples;
                 sampleIndex++;
             }
-        };
-        if (sampleIndex < SamplesCount)
+        }
+
+        if (sampleIndex < this.SamplesCount)
         {
             throw new CorruptedWaveException("Invalid wave file, the size is too small and couldn't read all the samples.");
         }
@@ -257,7 +258,7 @@ public class WaveParser
 
     private async Task InternalInitialize(bool useAsync, CancellationToken cancellationToken)
     {
-        if (isInitialized)
+        if (this.isInitialized)
         {
             return;
         }
@@ -267,13 +268,13 @@ public class WaveParser
             if (useAsync)
             {
 #if NET6_0_OR_GREATER
-                return await waveStream.ReadAsync(buffer.AsMemory(offset, count), cancellationToken);
+                return await this.waveStream.ReadAsync(buffer.AsMemory(offset, count), cancellationToken);
 #else
                 return await waveStream.ReadAsync(buffer, offset, count, cancellationToken);
 #endif
             }
 
-            return waveStream.Read(buffer, offset, count);
+            return this.waveStream.Read(buffer, offset, count);
         }
 
         var buffer = new byte[12];
@@ -284,7 +285,7 @@ public class WaveParser
             throw new CorruptedWaveException("Invalid wave file, the size is too small.");
         }
 
-        //Read RIFF Header
+        // Read RIFF Header
         if (buffer[0] != 'R' || buffer[1] != 'I' || buffer[2] != 'F' || buffer[3] != 'F')
         {
             throw new CorruptedWaveException("Invalid wave file RIFF header.");
@@ -323,9 +324,9 @@ public class WaveParser
                 break;
             }
 
-            if (waveStream.CanSeek)
+            if (this.waveStream.CanSeek)
             {
-                waveStream.Seek(chunkSize, SeekOrigin.Current);
+                this.waveStream.Seek(chunkSize, SeekOrigin.Current);
             }
             else
             {
@@ -350,105 +351,54 @@ public class WaveParser
         var format = BitConverter.ToUInt16(fmtBuffer, 0);
         if (format != 1 && format != 65534) // Allow both standard PCM and WAVE_FORMAT_EXTENSIBLE
         {
-            throw new CorruptedWaveException("Unsupported wave file");
+            throw new NotSupportedWaveException("Unsupported wave format.");
         }
 
-        // If the file is in WAVE_FORMAT_EXTENSIBLE format, we'll need to read the SubFormat field
-        if (format == 65534)
+        // Read Channels
+        this.channels = BitConverter.ToUInt16(fmtBuffer, 2);
+
+        // Read Sample Rate
+        this.sampleRate = BitConverter.ToUInt32(fmtBuffer, 4);
+
+        // Read Bits Per Sample
+        this.bitsPerSample = BitConverter.ToUInt16(fmtBuffer, 14);
+
+        // Search for data chunk
+        while (true)
         {
-            // Verify that fmtChunkSize is at least 40, which is required for WAVE_FORMAT_EXTENSIBLE
-            if (fmtChunkSize < 40)
+            var nextChunkHeader = new byte[8];
+
+            actualRead = await ReadBytesAsync(nextChunkHeader, 0, 8);
+
+            if (actualRead != 8)
             {
-                throw new CorruptedWaveException("Invalid wave format size.");
+                throw new CorruptedWaveException("Invalid wave file, cannot read next chunk.");
             }
 
-            // The SubFormat field is a GUID, but for PCM data it will be {00000001-0000-0010-8000-00aa00389b71}
-            // Check this manually, byte by byte
-            for (var i = 0; i < 16; i++)
-            {
-                if (fmtBuffer[24 + i] != expectedSubFormatForPcm[i])
-                {
-                    throw new CorruptedWaveException("Unsupported wave file format. Only PCM is supported.");
-                }
-            }
-        }
-
-        channels = BitConverter.ToUInt16(fmtBuffer, 2);
-        if (channels == 0)
-        {
-            throw new NotSupportedWaveException("Cannot read wave file with 0 channels.");
-        }
-
-        sampleRate = BitConverter.ToUInt32(fmtBuffer, 4);
-        if (sampleRate != 16000)
-        {
-            throw new NotSupportedWaveException("Only 16KHz sample rate is supported.");
-        }
-
-        // Skip Average bytes rate 8 => 12
-
-        // Skip Block Allign 12 => 14
-
-        bitsPerSample = BitConverter.ToUInt16(fmtBuffer, 14);
-
-        if (bitsPerSample != 8 && bitsPerSample != 16 && bitsPerSample != 24 && bitsPerSample != 32)
-        {
-            throw new NotSupportedWaveException($"Bits per sample {bitsPerSample} is not supported.");
-        }
-
-        // Seek data chuunk
-        // Read chunk name and size
-
-        await ReadBytesAsync(buffer, 0, 8);
-
-        while (buffer[0] != 'd' || buffer[1] != 'a' || buffer[2] != 't' || buffer[3] != 'a')
-        {
-            var chunkSize = BitConverter.ToInt32(buffer, 4);
+            var chunkSize = BitConverter.ToInt32(nextChunkHeader, 4);
             if (chunkSize < 0)
             {
                 throw new CorruptedWaveException("Invalid wave chunk size.");
             }
-            if (waveStream.CanSeek)
+
+            if (nextChunkHeader[0] == 'd' && nextChunkHeader[1] == 'a' && nextChunkHeader[2] == 't' && nextChunkHeader[3] == 'a')
             {
-                waveStream.Seek(chunkSize, SeekOrigin.Current);
+                this.dataChunkSize = (uint)chunkSize;
+                this.dataChunkPosition = this.waveStream.Position;
+                break;
+            }
+
+            if (this.waveStream.CanSeek)
+            {
+                this.waveStream.Seek(chunkSize, SeekOrigin.Current);
             }
             else
             {
                 var restOfChunk = new byte[chunkSize];
                 await ReadBytesAsync(restOfChunk, 0, chunkSize);
             }
-
-            actualRead = await ReadBytesAsync(buffer, 0, 8);
-
-            if (actualRead != 8)
-            {
-                throw new CorruptedWaveException("Invalid wave chunk size.");
-            }
         }
 
-        dataChunkSize = BitConverter.ToUInt32(buffer, 4);
-        // if the data chunk is not specified, it means the wave was constructed on the fly
-        // and we need to read until the end of the stream
-        if (dataChunkSize == uint.MaxValue)
-        {
-            dataChunkSize = (uint)(waveStream.Length - waveStream.Position);
-        }
-
-        dataChunkPosition = waveStream.Position;
-        isInitialized = true;
-    }
-}
-
-public class CorruptedWaveException : Exception
-{
-    public CorruptedWaveException(string? message) : base(message)
-    {
-    }
-}
-
-public class NotSupportedWaveException : Exception
-{
-    public NotSupportedWaveException(string? message) : base(message)
-    {
+        this.isInitialized = true;
     }
 }

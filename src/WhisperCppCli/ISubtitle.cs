@@ -7,8 +7,14 @@ using System.Collections.Generic;
 
 namespace WhisperCppCli.Models
 {
+    /// <summary>
+    /// Represents a subtitle.
+    /// </summary>
     public interface ISubtitle
     {
+        /// <summary>
+        /// Gets or sets the lines of the subtitle.
+        /// </summary>
         List<ISubtitleLine> Lines { get; set; }
     }
 }

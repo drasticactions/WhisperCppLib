@@ -10,12 +10,22 @@ using System.Text;
 
 namespace WhisperCppCli.Models
 {
+    /// <summary>
+    /// Represents a subtitle line in SRT format.
+    /// </summary>
     public class SrtSubtitleLine : ISubtitleLine
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SrtSubtitleLine"/> class.
+        /// </summary>
         public SrtSubtitleLine()
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SrtSubtitleLine"/> class with the specified subtitle text.
+        /// </summary>
+        /// <param name="subtitleText">The subtitle text.</param>
         public SrtSubtitleLine(string subtitleText)
         {
             subtitleText = subtitleText.Trim();
@@ -37,13 +47,22 @@ namespace WhisperCppCli.Models
         /// <inheritdoc/>
         public TimeSpan End { get; set; }
 
+        /// <summary>
+        /// Gets the time range of the subtitle line.
+        /// </summary>
         public string Time => $"{this.Start} -> {this.End}";
 
         /// <inheritdoc/>
         public string Text { get; set; }
 
+        /// <summary>
+        /// Gets or sets the line number of the subtitle line.
+        /// </summary>
         public int LineNumber { get; set; }
 
+        /// <summary>
+        /// Gets or sets the image data of the subtitle line.
+        /// </summary>
         public byte[] Image { get; set; }
 
         /// <inheritdoc/>

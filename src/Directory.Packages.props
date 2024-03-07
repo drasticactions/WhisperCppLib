@@ -1,0 +1,15 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="DotMake.CommandLine" Version="1.8.0" />
+	  <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+	  <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
+	  <PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
+    <PackageVersion Include="StyleCop.Analyzers" Version="1.2.0-beta.435" />
+   
+    <!-- <PackageVersion Include="" Version=""/> -->
+  </ItemGroup>
+</Project>

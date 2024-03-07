@@ -1,4 +1,8 @@
-﻿using System;
+﻿// <copyright file="Program.cs" company="Drastic Actions">
+// Copyright (c) Drastic Actions. All rights reserved.
+// </copyright>
+
+using System;
 using System.IO;
 using DotMake.CommandLine;
 using Microsoft.Extensions.DependencyInjection;
@@ -48,7 +52,7 @@ public class RootCommand
     [CliCommand(Description = "Infer from a file")]
 #pragma warning disable CS9107 // パラメーターは外側の型の状態にキャプチャされ、その値も基底コンストラクターに渡されます。この値は、基底クラスでもキャプチャされる可能性があります。
     public class InferCommand(ILoggerFactory loggerFactory) : CommandBase(loggerFactory)
-#pragma warning restore CS9107 // パラメーターは外側の型の状態にキャプチャされ、その値も基底コンストラクターに渡されます。この値は、基底クラスでもキャプチャされる可能性があります。 
+#pragma warning restore CS9107 // パラメーターは外側の型の状態にキャプチャされ、その値も基底コンストラクターに渡されます。この値は、基底クラスでもキャプチャされる可能性があります。
     {
         /// <summary>
         /// Run the command.
@@ -61,7 +65,7 @@ public class RootCommand
             using var whisperProcessor = new WhisperProcessor(new WhisperProcessorModelFileLoader(this.Model), options);
             using var stream = File.OpenRead(this.InputFile);
             var result = whisperProcessor.ProcessAsync(stream);
-            await foreach(var item in result)
+            await foreach (var item in result)
             {
                 Console.WriteLine(item.Text);
                 if (item.SpeakerTurn)
@@ -82,13 +86,13 @@ public abstract class CommandBase(ILoggerFactory loggerFactory)
     /// Gets or sets the Whisper model.
     /// </summary>
     [CliOption(Description = "Whisper model")]
-    public required string Model { get; set; }
-    
+    required public string Model { get; set; }
+
     /// <summary>
     /// Gets or sets the Input File.
     /// </summary>
     [CliOption(Description = "Input File")]
-    public required string InputFile { get; set; }
+    required public string InputFile { get; set; }
 
     /// <summary>
     /// Run the command.

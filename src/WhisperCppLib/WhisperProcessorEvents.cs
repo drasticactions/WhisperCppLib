@@ -19,7 +19,7 @@ public class EncoderBeginData
 
 public class SegmentData
 {
-    public SegmentData(string text, TimeSpan start, TimeSpan end, float minProbability, float maxProbability, float probability, string language)
+    public SegmentData(string text, TimeSpan start, TimeSpan end, float minProbability, float maxProbability, float probability, string language, bool speakerTurn)
     {
         Text = text;
         Start = start;
@@ -28,6 +28,7 @@ public class SegmentData
         MaxProbability = maxProbability;
         Probability = probability;
         Language = language;
+        SpeakerTurn = speakerTurn;
     }
 
     /// <summary>
@@ -73,4 +74,9 @@ public class SegmentData
     /// Gets the language of the current segment.
     /// </summary>
     public string Language { get; }
+    
+    /// <summary>
+    /// Gets a value indicating whether the speaker changed in this segment.
+    /// </summary>
+    public bool SpeakerTurn { get; }
 }

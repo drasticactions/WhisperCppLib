@@ -375,6 +375,11 @@ public class WhisperProcessor : IAsyncDisposable, IDisposable
         {
             whisperParams.AudioContextSize = options.AudioContextSize.Value;
         }
+        
+        if (options.TinyDiarizeSpeakerTurnDirection.HasValue)
+        {
+            whisperParams.TinyDiarizeSpeakerTurnDirection = options.TinyDiarizeSpeakerTurnDirection.Value ? trueByte : falseByte;
+        }
 
         if (!string.IsNullOrEmpty(options.Prompt))
         {
@@ -550,7 +555,7 @@ public class WhisperProcessor : IAsyncDisposable, IDisposable
             var t1 = TimeSpan.FromMilliseconds(WhisperCppInterop.whisper_full_get_segment_t1_from_state(state, segmentIndex) * 10);
             var t0 = TimeSpan.FromMilliseconds(WhisperCppInterop.whisper_full_get_segment_t0_from_state(state, segmentIndex) * 10);
             var textAnsi = StringFromNativeUtf8(WhisperCppInterop.whisper_full_get_segment_text_from_state(state, segmentIndex));
-
+            var speakerTurn = WhisperCppInterop.whisper_full_get_segment_speaker_turn_next_from_state(state, segmentIndex);
             float minimumProbability = 0;
             float maximumProbability = 0;
             double sumProbability = 0;
@@ -584,7 +589,7 @@ public class WhisperProcessor : IAsyncDisposable, IDisposable
 
             if (!string.IsNullOrEmpty(textAnsi))
             {
-                var eventHandlerArgs = new SegmentData(textAnsi, t0, t1, minimumProbability, maximumProbability, (float)(sumProbability / numberOfTokens), language!);
+                var eventHandlerArgs = new SegmentData(textAnsi, t0, t1, minimumProbability, maximumProbability, (float)(sumProbability / numberOfTokens), language!, speakerTurn);
 
                 this.OnSegmentEventHandler?.Invoke(eventHandlerArgs);
                 if (currentCancellationToken.HasValue && currentCancellationToken.Value.IsCancellationRequested)

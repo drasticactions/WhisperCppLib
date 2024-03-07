@@ -2,7 +2,7 @@
   "profiles": {
     "WhisperCppCli": {
       "commandName": "Project",
-      "commandLineArgs": "infer --model \"ggml-base.en.bin\" --input-file \"samples_jfk.wav\""
+      "commandLineArgs": "infer --model \"ggml-base.en.bin\" --input-file \"test.wav\""
     }
   }
 }

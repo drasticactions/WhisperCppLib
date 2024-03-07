@@ -57,12 +57,17 @@ public class RootCommand
         public override async Task RunAsync()
         {
             var options = new WhisperProcessorOptions();
+            options.TinyDiarizeSpeakerTurnDirection = true;
             using var whisperProcessor = new WhisperProcessor(new WhisperProcessorModelFileLoader(this.Model), options);
             using var stream = File.OpenRead(this.InputFile);
             var result = whisperProcessor.ProcessAsync(stream);
             await foreach(var item in result)
             {
-                Console.Write(item.Text);
+                Console.WriteLine(item.Text);
+                if (item.SpeakerTurn)
+                {
+                    Console.WriteLine("Speaker Turn");
+                }
             }
         }
     }

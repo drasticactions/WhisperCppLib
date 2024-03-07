@@ -7,6 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WhisperCppLib", "WhisperCpp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WhisperCppCli", "WhisperCppCli\WhisperCppCli.csproj", "{90D3B782-2EB5-4E69-A50B-D0CAD6F73F10}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WhisperCppLib.FFMpeg", "WhisperCppLib.FFMpeg\WhisperCppLib.FFMpeg.csproj", "{A8168E4F-F27F-42F8-AF03-EB2F88FA31E2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WhisperCppLib.VLC", "WhisperCppLib.VLC\WhisperCppLib.VLC.csproj", "{A75E6928-C189-437B-978F-6CE4A89FCE63}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{90D3B782-2EB5-4E69-A50B-D0CAD6F73F10}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{90D3B782-2EB5-4E69-A50B-D0CAD6F73F10}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{90D3B782-2EB5-4E69-A50B-D0CAD6F73F10}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8168E4F-F27F-42F8-AF03-EB2F88FA31E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8168E4F-F27F-42F8-AF03-EB2F88FA31E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8168E4F-F27F-42F8-AF03-EB2F88FA31E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8168E4F-F27F-42F8-AF03-EB2F88FA31E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A75E6928-C189-437B-978F-6CE4A89FCE63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A75E6928-C189-437B-978F-6CE4A89FCE63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A75E6928-C189-437B-978F-6CE4A89FCE63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A75E6928-C189-437B-978F-6CE4A89FCE63}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

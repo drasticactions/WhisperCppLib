@@ -9,4 +9,12 @@
 		<RootNamespace>WhisperCppLib</RootNamespace>
 	</PropertyGroup>
 
+	<ItemGroup>
+	  <PackageReference Include="Xabe.FFmpeg" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\WhisperCppLib\WhisperCppLib.csproj" />
+	</ItemGroup>
+
 </Project>

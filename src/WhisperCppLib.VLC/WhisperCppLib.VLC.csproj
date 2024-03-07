@@ -9,4 +9,12 @@
 		<RootNamespace>WhisperCppLib</RootNamespace>
 	</PropertyGroup>
 
+	<ItemGroup>
+		<PackageReference Include="LibVLCSharp" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\WhisperCppLib\WhisperCppLib.csproj" />
+	</ItemGroup>
+
 </Project>

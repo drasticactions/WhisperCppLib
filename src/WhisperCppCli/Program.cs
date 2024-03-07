@@ -2,12 +2,9 @@
 // Copyright (c) Drastic Actions. All rights reserved.
 // </copyright>
 
-using System;
-using System.IO;
 using DotMake.CommandLine;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using WhisperCppCli.Models;
 using WhisperCppLib;
 
 #if DEBUG

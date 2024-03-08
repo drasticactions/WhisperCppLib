@@ -6,6 +6,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<PublishAot>true</PublishAot>
+		<NativeLibraries>ON</NativeLibraries>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -19,5 +20,4 @@
 	  <PackageReference Include="Microsoft.Extensions.Logging.Console" />
 	  <PackageReference Include="Microsoft.Extensions.Logging.Debug" />
 	</ItemGroup>
-	
 </Project>

@@ -430,6 +430,11 @@ public class WhisperProcessor : IAsyncDisposable, IDisposable
             whisperParams.TokenTimestampsThreshold = this.options.TokenTimestampsThreshold.Value;
         }
 
+        if (this.options.PrintTimestamps.HasValue)
+        {
+            whisperParams.PrintTimestamps = this.options.PrintTimestamps.Value ? TrueByte : FalseByte;
+        }
+
         if (this.options.TokenTimestampsSumThreshold.HasValue)
         {
             whisperParams.TokenTimestampsSumThreshold = this.options.TokenTimestampsSumThreshold.Value;

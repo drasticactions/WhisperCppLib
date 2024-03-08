@@ -2,7 +2,7 @@
   "profiles": {
     "WhisperCppCli": {
       "commandName": "Project",
-      "commandLineArgs": "infer --model \"/Users/drasticactions/Developer/whisper.cpp/models/ggml-small.en-tdrz.bin\" --input-file \"/var/folders/1n/ntp3k0sn55scsqnvjr9x7fkm0000gn/T/gtuckvp3.ewv.wav\""
+      "commandLineArgs": "infer --print-timestamps --model \"/Users/drasticactions/Developer/whisper.cpp/models/ggml-small.en-tdrz.bin\" --input-file \"/var/folders/1n/ntp3k0sn55scsqnvjr9x7fkm0000gn/T/gtuckvp3.ewv.wav\""
     }
   }
 }

@@ -4,26 +4,30 @@
 
 using System.Text.RegularExpressions;
 using LibVLCSharp.Shared;
+using Microsoft.Extensions.Logging;
 
 namespace WhisperCppLib;
 
 /// <summary>
 /// Represents a service for transcoding media files using VLC.
 /// </summary>
-public class VlcTranscodeService : ITranscodeService
+public class VlcTranscodeService : ITranscodeService, IDisposable
 {
     private string basePath;
     private string? generatedFilename;
 
     private LibVLC libVLC;
+    private ILogger logger;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="VlcTranscodeService"/> class.
     /// </summary>
+    /// <param name="logger">The logger.</param>
     /// <param name="basePath">The base path for storing transcoded files.</param>
     /// <param name="generatedFilename">The generated filename for the transcoded file.</param>
-    public VlcTranscodeService(string? basePath = default, string? generatedFilename = default)
+    public VlcTranscodeService(ILogger logger, string? basePath = default, string? generatedFilename = default)
     {
+        this.logger = logger;
         this.basePath = basePath ?? Path.GetTempPath();
         this.libVLC = new LibVLC();
         this.generatedFilename = generatedFilename;
@@ -68,6 +72,12 @@ public class VlcTranscodeService : ITranscodeService
         }
 
         return outputfile;
+    }
+
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+        this.libVLC.Dispose();
     }
 
     private static bool IsUrl(string str)

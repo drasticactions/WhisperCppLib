@@ -28,7 +28,7 @@ public static class WhisperCppInterop
     /// <param name="parameters">The context parameters.</param>
     /// <returns>The initialized Whisper context.</returns>
     [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
-    public static extern IntPtr Whisper_init_from_file_with_params(string path_model, WhisperContextParams parameters);
+    public static extern IntPtr whisper_init_from_file_with_params(string path_model, WhisperContextParams parameters);
 
     /// <summary>
     /// Initializes the Whisper context from a buffer with parameters.
@@ -38,7 +38,7 @@ public static class WhisperCppInterop
     /// <param name="parameters">The context parameters.</param>
     /// <returns>The initialized Whisper context.</returns>
     [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
-    public static extern IntPtr Whisper_init_from_buffer_with_params(IntPtr buffer, UIntPtr buffer_size, WhisperContextParams parameters);
+    public static extern IntPtr whisper_init_from_buffer_with_params(IntPtr buffer, UIntPtr buffer_size, WhisperContextParams parameters);
 
     /// <summary>
     /// Initializes the Whisper context with parameters.
@@ -47,7 +47,7 @@ public static class WhisperCppInterop
     /// <param name="parameters">The context parameters.</param>
     /// <returns>The initialized Whisper context.</returns>
     [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
-    public static extern IntPtr Whisper_init_with_params(IntPtr loader, WhisperContextParams parameters);
+    public static extern IntPtr whisper_init_with_params(IntPtr loader, WhisperContextParams parameters);
 
     /// <summary>
     /// Initializes the Whisper context from a file with parameters without state.
@@ -56,7 +56,7 @@ public static class WhisperCppInterop
     /// <param name="parameters">The context parameters.</param>
     /// <returns>The initialized Whisper context.</returns>
     [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
-    public static extern IntPtr Whisper_init_from_file_with_params_no_state(string path_model, WhisperContextParams parameters);
+    public static extern IntPtr whisper_init_from_file_with_params_no_state(string path_model, WhisperContextParams parameters);
 
     /// <summary>
     /// Initializes the Whisper context from a buffer with parameters without state.
@@ -66,7 +66,7 @@ public static class WhisperCppInterop
     /// <param name="parameters">The context parameters.</param>
     /// <returns>The initialized Whisper context.</returns>
     [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
-    public static extern IntPtr Whisper_init_from_buffer_with_params_no_state(IntPtr buffer, UIntPtr buffer_size, WhisperContextParams parameters);
+    public static extern IntPtr whisper_init_from_buffer_with_params_no_state(IntPtr buffer, UIntPtr buffer_size, WhisperContextParams parameters);
 
     /// <summary>
     /// Initializes the Whisper context with parameters without state.
@@ -75,21 +75,21 @@ public static class WhisperCppInterop
     /// <param name="parameters">The context parameters.</param>
     /// <returns>The initialized Whisper context.</returns>
     [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
-    public static extern IntPtr Whisper_init_with_params_no_state(IntPtr loader, WhisperContextParams parameters);
+    public static extern IntPtr whisper_init_with_params_no_state(IntPtr loader, WhisperContextParams parameters);
 
     /// <summary>
     /// Frees the Whisper context.
     /// </summary>
     /// <param name="context">The Whisper context to free.</param>
     [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    public static extern void Whisper_free(IntPtr context);
+    public static extern void whisper_free(IntPtr context);
 
     /// <summary>
     /// Frees the Whisper context parameters.
     /// </summary>
     /// <param name="paramsPtr">The pointer to the context parameters.</param>
     [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    public static extern void Whisper_free_params(IntPtr paramsPtr);
+    public static extern void whisper_free_params(IntPtr paramsPtr);
 
     /// <summary>
     /// Gets the default Whisper full parameters for the specified sampling strategy.
@@ -97,7 +97,7 @@ public static class WhisperCppInterop
     /// <param name="strategy">The sampling strategy.</param>
     /// <returns>The default Whisper full parameters.</returns>
     [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    public static extern WhisperFullParams Whisper_full_default_params(WhisperSamplingStrategy strategy);
+    public static extern WhisperFullParams whisper_full_default_params(WhisperSamplingStrategy strategy);
 
     /// <summary>
     /// Gets the default Whisper full parameters for the specified sampling strategy by reference.
@@ -105,7 +105,7 @@ public static class WhisperCppInterop
     /// <param name="strategy">The sampling strategy.</param>
     /// <returns>The pointer to the default Whisper full parameters.</returns>
     [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    public static extern IntPtr Whisper_full_default_params_by_ref(WhisperSamplingStrategy strategy);
+    public static extern IntPtr whisper_full_default_params_by_ref(WhisperSamplingStrategy strategy);
 
     /// <summary>
     /// Performs full Whisper transcription.
@@ -116,7 +116,7 @@ public static class WhisperCppInterop
     /// <param name="nSamples">The number of audio samples.</param>
     /// <returns>The number of segments.</returns>
     [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    public static extern int Whisper_full(IntPtr context, WhisperFullParams parameters, IntPtr samples, int nSamples);
+    public static extern int whisper_full(IntPtr context, WhisperFullParams parameters, IntPtr samples, int nSamples);
 
     /// <summary>
     /// Performs full Whisper transcription with state.
@@ -128,7 +128,7 @@ public static class WhisperCppInterop
     /// <param name="nSamples">The number of audio samples.</param>
     /// <returns>The number of segments.</returns>
     [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    public static extern int Whisper_full_with_state(IntPtr context, IntPtr state, WhisperFullParams parameters, IntPtr samples, int nSamples);
+    public static extern int whisper_full_with_state(IntPtr context, IntPtr state, WhisperFullParams parameters, IntPtr samples, int nSamples);
 
     /// <summary>
     /// Performs parallel full Whisper transcription.
@@ -140,7 +140,7 @@ public static class WhisperCppInterop
     /// <param name="nThreads">The number of threads.</param>
     /// <returns>The number of segments.</returns>
     [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    public static extern int Whisper_full_parallel(IntPtr context, WhisperFullParams parameters, IntPtr samples, int nSamples, int nThreads);
+    public static extern int whisper_full_parallel(IntPtr context, WhisperFullParams parameters, IntPtr samples, int nSamples, int nThreads);
 
     /// <summary>
     /// Gets the number of segments from the Whisper state.
@@ -148,7 +148,7 @@ public static class WhisperCppInterop
     /// <param name="state">The Whisper state.</param>
     /// <returns>The number of segments.</returns>
     [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    public static extern int Whisper_full_n_segments_from_state(IntPtr state);
+    public static extern int whisper_full_n_segments_from_state(IntPtr state);
 
     /// <summary>
     /// Gets the start time of the segment from the Whisper state.
@@ -157,7 +157,7 @@ public static class WhisperCppInterop
     /// <param name="index">The index of the segment.</param>
     /// <returns>The start time of the segment.</returns>
     [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    public static extern long Whisper_full_get_segment_t0_from_state(IntPtr state, int index);
+    public static extern long whisper_full_get_segment_t0_from_state(IntPtr state, int index);
 
     /// <summary>
     /// Gets the end time of the segment from the Whisper state.
@@ -166,7 +166,7 @@ public static class WhisperCppInterop
     /// <param name="index">The index of the segment.</param>
     /// <returns>The end time of the segment.</returns>
     [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    public static extern long Whisper_full_get_segment_t1_from_state(IntPtr state, int index);
+    public static extern long whisper_full_get_segment_t1_from_state(IntPtr state, int index);
 
     /// <summary>
     /// Gets the text of the segment from the Whisper state.
@@ -175,7 +175,7 @@ public static class WhisperCppInterop
     /// <param name="index">The index of the segment.</param>
     /// <returns>The text of the segment.</returns>
     [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    public static extern IntPtr Whisper_full_get_segment_text_from_state(IntPtr state, int index);
+    public static extern IntPtr whisper_full_get_segment_text_from_state(IntPtr state, int index);
 
     /// <summary>
     /// Gets the number of tokens in the segment from the Whisper state.
@@ -184,7 +184,7 @@ public static class WhisperCppInterop
     /// <param name="index">The index of the segment.</param>
     /// <returns>The number of tokens in the segment.</returns>
     [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    public static extern int Whisper_full_n_tokens_from_state(IntPtr state, int index);
+    public static extern int whisper_full_n_tokens_from_state(IntPtr state, int index);
 
     /// <summary>
     /// Gets the probability of the token in the segment from the Whisper state.
@@ -194,7 +194,7 @@ public static class WhisperCppInterop
     /// <param name="tokenIndex">The index of the token.</param>
     /// <returns>The probability of the token.</returns>
     [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    public static extern float Whisper_full_get_token_p_from_state(IntPtr state, int segmentIndex, int tokenIndex);
+    public static extern float whisper_full_get_token_p_from_state(IntPtr state, int segmentIndex, int tokenIndex);
 
     /// <summary>
     /// Gets the speaker turn of the segment from the Whisper context.
@@ -204,7 +204,7 @@ public static class WhisperCppInterop
     /// <returns>True if it is the speaker turn, otherwise false.</returns>
     [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
     [return: MarshalAs(UnmanagedType.I1)]
-    public static extern bool Whisper_full_get_segment_speaker_turn_next(IntPtr ctx, int iSegment);
+    public static extern bool whisper_full_get_segment_speaker_turn_next(IntPtr ctx, int iSegment);
 
     /// <summary>
     /// Gets the speaker turn of the segment from the Whisper state.
@@ -214,7 +214,7 @@ public static class WhisperCppInterop
     /// <returns>True if it is the speaker turn, otherwise false.</returns>
     [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
     [return: MarshalAs(UnmanagedType.I1)]
-    public static extern bool Whisper_full_get_segment_speaker_turn_next_from_state(IntPtr state, int iSegment);
+    public static extern bool whisper_full_get_segment_speaker_turn_next_from_state(IntPtr state, int iSegment);
 
     /// <summary>
     /// Tokenizes the text using the Whisper context.
@@ -225,14 +225,14 @@ public static class WhisperCppInterop
     /// <param name="nMaxTokens">The maximum number of tokens.</param>
     /// <returns>The number of tokens.</returns>
     [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    public static extern int Whisper_tokenize(IntPtr context, IntPtr text, IntPtr tokens, int nMaxTokens);
+    public static extern int whisper_tokenize(IntPtr context, IntPtr text, IntPtr tokens, int nMaxTokens);
 
     /// <summary>
     /// Gets the maximum language ID.
     /// </summary>
     /// <returns>The maximum language ID.</returns>
     [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    public static extern int Whisper_lang_max_id();
+    public static extern int whisper_lang_max_id();
 
     /// <summary>
     /// Auto detects the language using the Whisper context and state.
@@ -244,7 +244,7 @@ public static class WhisperCppInterop
     /// <param name="lang_probs">The language probabilities.</param>
     /// <returns>The detected language ID.</returns>
     [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    public static extern int Whisper_lang_auto_detect_with_state(IntPtr context, IntPtr state, int offset_ms, int n_threads, IntPtr lang_probs);
+    public static extern int whisper_lang_auto_detect_with_state(IntPtr context, IntPtr state, int offset_ms, int n_threads, IntPtr lang_probs);
 
     /// <summary>
     /// Converts PCM audio to mel spectrogram using the Whisper context and state.
@@ -256,7 +256,7 @@ public static class WhisperCppInterop
     /// <param name="nThreads">The number of threads.</param>
     /// <returns>The status code.</returns>
     [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    public static extern int Whisper_pcm_to_mel_with_state(IntPtr context, IntPtr state, IntPtr samples, int nSamples, int nThreads);
+    public static extern int whisper_pcm_to_mel_with_state(IntPtr context, IntPtr state, IntPtr samples, int nSamples, int nThreads);
 
     /// <summary>
     /// Converts PCM audio to mel spectrogram using the Whisper context and state with phase vocoder.
@@ -268,7 +268,7 @@ public static class WhisperCppInterop
     /// <param name="nThreads">The number of threads.</param>
     /// <returns>The status code.</returns>
     [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    public static extern int Whisper_pcm_to_mel_phase_vocoder_with_state(IntPtr context, IntPtr state, IntPtr samples, int nSamples, int nThreads);
+    public static extern int whisper_pcm_to_mel_phase_vocoder_with_state(IntPtr context, IntPtr state, IntPtr samples, int nSamples, int nThreads);
 
     /// <summary>
     /// Gets the language string for the specified language ID.
@@ -276,7 +276,7 @@ public static class WhisperCppInterop
     /// <param name="lang_id">The language ID.</param>
     /// <returns>The language string.</returns>
     [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    public static extern IntPtr Whisper_lang_str(int lang_id);
+    public static extern IntPtr whisper_lang_str(int lang_id);
 
     /// <summary>
     /// Gets the language ID from the Whisper context.
@@ -284,7 +284,7 @@ public static class WhisperCppInterop
     /// <param name="context">The Whisper context.</param>
     /// <returns>The language ID.</returns>
     [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    public static extern int Whisper_full_lang_id(IntPtr context);
+    public static extern int whisper_full_lang_id(IntPtr context);
 
     /// <summary>
     /// Initializes the Whisper state from the Whisper context.
@@ -292,7 +292,7 @@ public static class WhisperCppInterop
     /// <param name="context">The Whisper context.</param>
     /// <returns>The initialized Whisper state.</returns>
     [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    public static extern IntPtr Whisper_init_state(IntPtr context);
+    public static extern IntPtr whisper_init_state(IntPtr context);
 
     /// <summary>
     /// Initializes the OpenVINO encoder in the Whisper context.
@@ -303,14 +303,14 @@ public static class WhisperCppInterop
     /// <param name="cacheDir">The cache directory.</param>
     /// <returns>The initialized Whisper context.</returns>
     [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    public static extern IntPtr Whisper_ctx_init_openvino_encoder(IntPtr context, string path, string device, string cacheDir);
+    public static extern IntPtr whisper_ctx_init_openvino_encoder(IntPtr context, string path, string device, string cacheDir);
 
     /// <summary>
     /// Frees the Whisper state.
     /// </summary>
     /// <param name="state">The Whisper state to free.</param>
     [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    public static extern void Whisper_free_state(IntPtr state);
+    public static extern void whisper_free_state(IntPtr state);
 
     /// <summary>
     /// Gets the language ID from the Whisper state.
@@ -318,7 +318,7 @@ public static class WhisperCppInterop
     /// <param name="state">The Whisper state.</param>
     /// <returns>The language ID.</returns>
     [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    public static extern int Whisper_full_lang_id_from_state(IntPtr state);
+    public static extern int whisper_full_lang_id_from_state(IntPtr state);
 }
 
 // Define the structure for whisper_context_params

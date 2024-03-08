@@ -7,7 +7,7 @@ namespace WhisperCppLib;
 /// <summary>
 /// Transcode Service.
 /// </summary>
-public interface ITranscodeService
+public interface ITranscodeService : IDisposable
 {
     /// <summary>
     /// Gets the base path.

@@ -33,6 +33,6 @@ public sealed class WhisperProcessorModelFileLoader : IWhisperProcessorModelLoad
     /// <returns>The pointer to the native context.</returns>
     public IntPtr LoadNativeContext()
     {
-        return WhisperCppInterop.Whisper_init_from_file_with_params_no_state(this.pathModel, default(WhisperContextParams));
+        return WhisperCppInterop.whisper_init_from_file_with_params_no_state(this.pathModel, default(WhisperContextParams));
     }
 }

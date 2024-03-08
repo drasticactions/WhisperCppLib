@@ -26,18 +26,23 @@ public class RootCommand
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public override async Task RunAsync()
         {
+            var logger = loggerFactory.CreateLogger<InferCommand>();
             var options = new WhisperProcessorOptions();
             options.TinyDiarizeSpeakerTurnDirection = true;
-            using var whisperProcessor = new WhisperProcessor(new WhisperProcessorModelFileLoader(this.Model), options);
-            using var stream = File.OpenRead(this.InputFile);
+            using var ffmpeg = new FFMpegTranscodeService(logger);
+            var output = await ffmpeg.ProcessFile(this.InputFile);
+            await using var whisperProcessor = new WhisperProcessor(new WhisperProcessorModelFileLoader(this.Model), options);
+            await using var stream = File.OpenRead(output);
             var result = whisperProcessor.ProcessAsync(stream);
             await foreach (var item in result)
             {
-                Console.WriteLine(item.Text);
+                var text = $"{item.Text.Trim()}";
                 if (item.SpeakerTurn)
                 {
-                    Console.WriteLine("Speaker Turn");
+                    text = $"{text} [Speaker Turn]";
                 }
+
+                logger.LogInformation(text);
             }
         }
     }

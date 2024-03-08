@@ -122,11 +122,11 @@ public class WhisperProcessor : IAsyncDisposable, IDisposable
     /// <returns>The detected language and its probability.</returns>
     public unsafe (string? language, float probability) DetectLanguageWithProbability(ReadOnlySpan<float> samples, bool speedUp = false)
     {
-        var probs = new float[WhisperCppInterop.Whisper_lang_max_id()];
+        var probs = new float[WhisperCppInterop.whisper_lang_max_id()];
 
         fixed (float* pData = probs)
         {
-            var state = WhisperCppInterop.Whisper_init_state(this.currentWhisperContext);
+            var state = WhisperCppInterop.whisper_init_state(this.currentWhisperContext);
             try
             {
                 fixed (float* pSamples = samples)
@@ -134,27 +134,27 @@ public class WhisperProcessor : IAsyncDisposable, IDisposable
                     if (speedUp)
                     {
                         // whisper_pcm_to_mel_phase_vocoder is not yet exported from whisper.cpp
-                        WhisperCppInterop.Whisper_pcm_to_mel_phase_vocoder_with_state(this.currentWhisperContext, state, (IntPtr)pSamples, samples.Length, this.whisperParams.Threads);
+                        WhisperCppInterop.whisper_pcm_to_mel_phase_vocoder_with_state(this.currentWhisperContext, state, (IntPtr)pSamples, samples.Length, this.whisperParams.Threads);
                     }
                     else
                     {
-                        WhisperCppInterop.Whisper_pcm_to_mel_with_state(this.currentWhisperContext, state, (IntPtr)pSamples, samples.Length, this.whisperParams.Threads);
+                        WhisperCppInterop.whisper_pcm_to_mel_with_state(this.currentWhisperContext, state, (IntPtr)pSamples, samples.Length, this.whisperParams.Threads);
                     }
                 }
 
-                var langId = WhisperCppInterop.Whisper_lang_auto_detect_with_state(this.currentWhisperContext, state, 0, this.whisperParams.Threads, (IntPtr)pData);
+                var langId = WhisperCppInterop.whisper_lang_auto_detect_with_state(this.currentWhisperContext, state, 0, this.whisperParams.Threads, (IntPtr)pData);
                 if (langId == -1)
                 {
                     return (null, 0f);
                 }
 
-                var languagePtr = WhisperCppInterop.Whisper_lang_str(langId);
+                var languagePtr = WhisperCppInterop.whisper_lang_str(langId);
                 var language = Marshal.PtrToStringAnsi(languagePtr);
                 return (language, probs[langId]);
             }
             finally
             {
-                WhisperCppInterop.Whisper_free_state(state);
+                WhisperCppInterop.whisper_free_state(state);
             }
         }
     }
@@ -194,17 +194,17 @@ public class WhisperProcessor : IAsyncDisposable, IDisposable
 
         fixed (float* pData = samples)
         {
-            var state = WhisperCppInterop.Whisper_init_state(this.currentWhisperContext);
+            var state = WhisperCppInterop.whisper_init_state(this.currentWhisperContext);
             try
             {
                 this.processingSemaphore.Wait();
                 this.segmentIndex = 0;
 
-                WhisperCppInterop.Whisper_full_with_state(this.currentWhisperContext, state, this.whisperParams, (IntPtr)pData, samples.Length);
+                WhisperCppInterop.whisper_full_with_state(this.currentWhisperContext, state, this.whisperParams, (IntPtr)pData, samples.Length);
             }
             finally
             {
-                WhisperCppInterop.Whisper_free_state(state);
+                WhisperCppInterop.whisper_free_state(state);
                 this.processingSemaphore.Release();
             }
         }
@@ -347,15 +347,15 @@ public class WhisperProcessor : IAsyncDisposable, IDisposable
                 this.processingSemaphore.Wait();
                 this.segmentIndex = 0;
 
-                var state = WhisperCppInterop.Whisper_init_state(this.currentWhisperContext);
+                var state = WhisperCppInterop.whisper_init_state(this.currentWhisperContext);
 
                 try
                 {
-                    WhisperCppInterop.Whisper_full_with_state(this.currentWhisperContext, state, this.whisperParams, (IntPtr)pData, samples.Length);
+                    WhisperCppInterop.whisper_full_with_state(this.currentWhisperContext, state, this.whisperParams, (IntPtr)pData, samples.Length);
                 }
                 finally
                 {
-                    WhisperCppInterop.Whisper_free_state(state);
+                    WhisperCppInterop.whisper_free_state(state);
                     this.processingSemaphore.Release();
                 }
             }
@@ -365,9 +365,9 @@ public class WhisperProcessor : IAsyncDisposable, IDisposable
     private WhisperFullParams GetWhisperParams()
     {
         var strategy = this.options.SamplingStrategy.GetNativeStrategy();
-        var whisperParamsRef = WhisperCppInterop.Whisper_full_default_params_by_ref(strategy);
+        var whisperParamsRef = WhisperCppInterop.whisper_full_default_params_by_ref(strategy);
         var whisperParams = Marshal.PtrToStructure<WhisperFullParams>(whisperParamsRef);
-        WhisperCppInterop.Whisper_free_params(whisperParamsRef);
+        WhisperCppInterop.whisper_free_params(whisperParamsRef);
         whisperParams.Strategy = strategy;
 
         if (this.options.Threads.HasValue)
@@ -568,13 +568,13 @@ public class WhisperProcessor : IAsyncDisposable, IDisposable
 
     private static string? GetAutodetectedLanguage(IntPtr state)
     {
-        var detectedLanguageId = WhisperCppInterop.Whisper_full_lang_id(state);
+        var detectedLanguageId = WhisperCppInterop.whisper_full_lang_id(state);
         if (detectedLanguageId == -1)
         {
             return null;
         }
 
-        var languagePtr = WhisperCppInterop.Whisper_lang_str(detectedLanguageId);
+        var languagePtr = WhisperCppInterop.whisper_lang_str(detectedLanguageId);
         var language = Marshal.PtrToStringAnsi(languagePtr);
         return language;
     }
@@ -641,26 +641,26 @@ public class WhisperProcessor : IAsyncDisposable, IDisposable
             return;
         }
 
-        var segments = WhisperCppInterop.Whisper_full_n_segments_from_state(state);
+        var segments = WhisperCppInterop.whisper_full_n_segments_from_state(state);
 
         while (this.segmentIndex < segments)
         {
-            var t1 = TimeSpan.FromMilliseconds(WhisperCppInterop.Whisper_full_get_segment_t1_from_state(state, this.segmentIndex) * 10);
-            var t0 = TimeSpan.FromMilliseconds(WhisperCppInterop.Whisper_full_get_segment_t0_from_state(state, this.segmentIndex) * 10);
-            var textAnsi = StringFromNativeUtf8(WhisperCppInterop.Whisper_full_get_segment_text_from_state(state, this.segmentIndex));
-            var speakerTurn = WhisperCppInterop.Whisper_full_get_segment_speaker_turn_next_from_state(state, this.segmentIndex);
+            var t1 = TimeSpan.FromMilliseconds(WhisperCppInterop.whisper_full_get_segment_t1_from_state(state, this.segmentIndex) * 10);
+            var t0 = TimeSpan.FromMilliseconds(WhisperCppInterop.whisper_full_get_segment_t0_from_state(state, this.segmentIndex) * 10);
+            var textAnsi = StringFromNativeUtf8(WhisperCppInterop.whisper_full_get_segment_text_from_state(state, this.segmentIndex));
+            var speakerTurn = WhisperCppInterop.whisper_full_get_segment_speaker_turn_next_from_state(state, this.segmentIndex);
             float minimumProbability = 0;
             float maximumProbability = 0;
             double sumProbability = 0;
-            var numberOfTokens = WhisperCppInterop.Whisper_full_n_tokens_from_state(state, this.segmentIndex);
-            var languageId = WhisperCppInterop.Whisper_full_lang_id_from_state(state);
-            var language = Marshal.PtrToStringAnsi(WhisperCppInterop.Whisper_lang_str(languageId));
+            var numberOfTokens = WhisperCppInterop.whisper_full_n_tokens_from_state(state, this.segmentIndex);
+            var languageId = WhisperCppInterop.whisper_full_lang_id_from_state(state);
+            var language = Marshal.PtrToStringAnsi(WhisperCppInterop.whisper_lang_str(languageId));
 
             if (this.options.ComputeProbabilities)
             {
                 for (var tokenIndex = 0; tokenIndex < numberOfTokens; tokenIndex++)
                 {
-                    var tokenProbability = WhisperCppInterop.Whisper_full_get_token_p_from_state(state, this.segmentIndex, tokenIndex);
+                    var tokenProbability = WhisperCppInterop.whisper_full_get_token_p_from_state(state, this.segmentIndex, tokenIndex);
                     sumProbability += tokenProbability;
                     if (tokenIndex == 0)
                     {

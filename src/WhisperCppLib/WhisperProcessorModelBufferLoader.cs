@@ -39,6 +39,6 @@ public class WhisperProcessorModelBufferLoader : IWhisperProcessorModelLoader
     public IntPtr LoadNativeContext()
     {
         var bufferLength = new UIntPtr((uint)this.buffer.Length);
-        return WhisperCppInterop.Whisper_init_from_buffer_with_params_no_state(this.pinnedBuffer.AddrOfPinnedObject(), bufferLength, default(WhisperContextParams));
+        return WhisperCppInterop.whisper_init_from_buffer_with_params_no_state(this.pinnedBuffer.AddrOfPinnedObject(), bufferLength, default(WhisperContextParams));
     }
 }

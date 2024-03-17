@@ -54,7 +54,8 @@
             <LibraryFileExtension Condition="$(IsOSX)">libwhisper.dylib</LibraryFileExtension>
 		</PropertyGroup>
 		<ItemGroup>
-			<LibraryFiles Include="$(CMakeProject)/$(LibraryFileExtension)" />
+			<LibraryFiles Condition="$(IsWindows)" Include="$(CMakeProject)/bin/$(Configuration)/$(LibraryFileExtension)" />	
+			<LibraryFiles Condition="!$(IsWindows)" Include="$(CMakeProject)/$(LibraryFileExtension)" />
 		</ItemGroup>
 		<Copy SourceFiles="@(LibraryFiles)" DestinationFolder="$(OutputPath)" />
 	</Target>
@@ -66,6 +67,6 @@
 		<ItemGroup>
 			<LibraryFiles Include="$(CMakeProject)/bin/$(LibraryFileExtension)" />
 		</ItemGroup>
-		<Copy SourceFiles="@(LibraryFiles)" DestinationFolder="$(OutputPath)" />
+		<Copy Condition="$(IsOSX)" SourceFiles="@(LibraryFiles)" DestinationFolder="$(OutputPath)" />
 	</Target>
 </Project>

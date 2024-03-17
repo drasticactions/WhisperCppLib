@@ -8,7 +8,7 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace WhisperCppCli.Models
+namespace WhisperCppLib
 {
     /// <summary>
     /// Represents a subtitle line in SRT format.
@@ -31,13 +31,13 @@ namespace WhisperCppCli.Models
             subtitleText = subtitleText.Trim();
             using (StringReader data = new StringReader(subtitleText))
             {
-                this.LineNumber = int.Parse(data.ReadLine().Trim());
+                LineNumber = int.Parse(data.ReadLine().Trim());
 
                 string secondLine = data.ReadLine();
-                this.Start = TimeSpan.ParseExact(secondLine.Substring(0, 12), @"hh\:mm\:ss\,fff", null);
-                this.End = TimeSpan.ParseExact(secondLine.Substring(17, 12), @"hh\:mm\:ss\,fff", null);
+                Start = TimeSpan.ParseExact(secondLine.Substring(0, 12), @"hh\:mm\:ss\,fff", null);
+                End = TimeSpan.ParseExact(secondLine.Substring(17, 12), @"hh\:mm\:ss\,fff", null);
 
-                this.Text = data.ReadToEnd().Trim();
+                Text = data.ReadToEnd().Trim();
             }
         }
 
@@ -50,7 +50,7 @@ namespace WhisperCppCli.Models
         /// <summary>
         /// Gets the time range of the subtitle line.
         /// </summary>
-        public string Time => $"{this.Start} -> {this.End}";
+        public string Time => $"{Start} -> {End}";
 
         /// <inheritdoc/>
         public string Text { get; set; }
@@ -69,14 +69,14 @@ namespace WhisperCppCli.Models
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine(this.LineNumber.ToString());
+            sb.AppendLine(LineNumber.ToString());
 
-            sb.Append(this.Start.ToString(@"hh\:mm\:ss\,fff"));
+            sb.Append(Start.ToString(@"hh\:mm\:ss\,fff"));
             sb.Append(" --> ");
-            sb.Append(this.End.ToString(@"hh\:mm\:ss\,fff"));
+            sb.Append(End.ToString(@"hh\:mm\:ss\,fff"));
             sb.AppendLine();
 
-            sb.Append(this.Text);
+            sb.Append(Text);
 
             return sb.ToString();
         }

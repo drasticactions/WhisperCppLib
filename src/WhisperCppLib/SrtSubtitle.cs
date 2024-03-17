@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace WhisperCppCli.Models
+namespace WhisperCppLib
 {
     /// <summary>
     /// Represents an SRT subtitle.
@@ -34,7 +34,7 @@ namespace WhisperCppCli.Models
             {
                 string subtitleLineTrimmed = subtitleLine.Trim();
                 SrtSubtitleLine block = new SrtSubtitleLine(subtitleLineTrimmed);
-                this.Lines.Add(block);
+                Lines.Add(block);
             }
         }
 
@@ -45,10 +45,10 @@ namespace WhisperCppCli.Models
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < this.Lines.Count; i++)
+            for (int i = 0; i < Lines.Count; i++)
             {
-                sb.Append(this.Lines[i].ToString());
-                if (i + 1 < this.Lines.Count)
+                sb.Append(Lines[i].ToString());
+                if (i + 1 < Lines.Count)
                 {
                     sb.AppendLine();
                     sb.AppendLine();

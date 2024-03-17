@@ -4,7 +4,7 @@
 
 using System;
 
-namespace WhisperCppCli.Models
+namespace WhisperCppLib
 {
     /// <summary>
     /// Represents a subtitle line.

@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<PublishAot>true</PublishAot>
+		<NativeLibraries>ON</NativeLibraries>
+		<IsPackable>false</IsPackable>
+		<IsTestProject>true</IsTestProject>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="MSTest" />
+		<PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\WhisperCppLib.FFMpeg\WhisperCppLib.FFMpeg.csproj" />
+		<ProjectReference Include="..\WhisperCppLib\WhisperCppLib.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
+	</ItemGroup>
+
+</Project>

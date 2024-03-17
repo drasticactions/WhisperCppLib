@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace WhisperCppCli.Models
+namespace WhisperCppLib
 {
     /// <summary>
     /// Represents a subtitle.

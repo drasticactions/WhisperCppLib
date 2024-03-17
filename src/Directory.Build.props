@@ -35,7 +35,7 @@
 	<Target Name="CMakeConfigure" BeforeTargets="Build" Condition="'$(NativeLibraries)'!='OFF'">
 		<PropertyGroup>
 			<CMakeCompilerFlags Condition="$(IsWindows)">-DCMAKE_CXX_FLAGS="/W0 /EHsc /w /D _MBCS" -DCMAKE_C_FLAGS="/W0 /w"</CMakeCompilerFlags>
-			<CMakeCompilerFlags Condition="!$(IsWindows)">-DCMAKE_CXX_FLAGS=-w -DCMAKE_C_FLAGS=-w</CMakeCompilerFlags>
+			<CMakeCompilerFlags Condition="$(IsLinux)">-DCMAKE_CXX_FLAGS=-w -DCMAKE_C_FLAGS=-w</CMakeCompilerFlags>
 			<CMakeOptions Condition="$(IsWindows)"></CMakeOptions>
 			<CMakeOptions Condition="$(IsOSX)">-DWHISPER_COREML=1 -DWHISPER_COREML_ALLOW_FALLBACK=1</CMakeOptions>
 			<CMakeOptions Condition="!$(IsLinux)"></CMakeOptions>

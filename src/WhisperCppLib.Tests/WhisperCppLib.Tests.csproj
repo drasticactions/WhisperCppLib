@@ -4,12 +4,16 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<PublishAot>true</PublishAot>
+		<PublishAot>false</PublishAot>
 		<NativeLibraries>ON</NativeLibraries>
 		<IsPackable>false</IsPackable>
 		<IsTestProject>true</IsTestProject>
 	</PropertyGroup>
-
+	
+	<PropertyGroup>
+		<RunSettingsFilePath>$(MSBuildProjectDirectory)\whisper.runsettings</RunSettingsFilePath>
+	</PropertyGroup>
+	
 	<ItemGroup>
 	  <Content Include="..\..\external\whisper.cpp\samples\jfk.wav" Link="jfk.wav">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>

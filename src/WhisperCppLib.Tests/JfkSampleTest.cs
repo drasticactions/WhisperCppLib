@@ -14,16 +14,27 @@ public class JfkSampleTest
     [ClassInitialize]
     public static void ClassInitialize(TestContext context)
     {
-        var modelLocation = (string?)context.Properties["whisperModelLocation"] ?? string.Empty;
-        if (string.IsNullOrEmpty(modelLocation))
+        modelPath = (string?)context.Properties["whisperModelLocation"] ?? string.Empty;
+        if (string.IsNullOrEmpty(modelPath))
         {
             throw new InvalidOperationException("Whisper model location not found.");
         }
     }
 
     [TestMethod]
-    public void TestMethod1()
+    public async Task DefaultOptionsTest()
     {
+        await using var whisper =
+            new WhisperProcessor(new WhisperProcessorModelFileLoader(modelPath), new WhisperProcessorOptions());
+        var stream = File.OpenRead("jfk.wav");
+        var result = whisper.ProcessAsync(stream);
+        Assert.IsNotNull(result);
+        await foreach (var item in result)
+        {
+            Assert.IsNotNull(item);
+            Assert.IsNotNull(item.Text);
+            Assert.IsFalse(string.IsNullOrEmpty(item.Text));
+        }
     }
 
     [ClassCleanup(ClassCleanupBehavior.EndOfAssembly)]

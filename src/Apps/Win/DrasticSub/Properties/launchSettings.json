@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "DrasticSub (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "DrasticSub (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

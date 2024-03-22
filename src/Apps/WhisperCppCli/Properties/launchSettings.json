@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "WhisperCppCli": {
+      "commandName": "Project",
+      "commandLineArgs": "model list"
+    }
+  }
+}

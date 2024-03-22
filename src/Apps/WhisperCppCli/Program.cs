@@ -3,8 +3,11 @@
 // </copyright>
 
 using DotMake.CommandLine;
+using Drastic.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using WhisperCppCli;
+using WhisperCppGui.Services;
 
 #if DEBUG
 var loggerFactory = LoggerFactory.Create(
@@ -23,7 +26,10 @@ var logger = loggerFactory.CreateLogger<RootCommand>();
 
 Cli.Ext.ConfigureServices(service =>
 {
+    service.AddSingleton<IAppDispatcher, ConsoleAppDispatcher>();
+    service.AddSingleton<IErrorHandlerService, ConsoleErrorHandlerService>();
     service.AddSingleton(loggerFactory);
+    service.AddSingleton<WhisperModelService>();
 });
 
 try

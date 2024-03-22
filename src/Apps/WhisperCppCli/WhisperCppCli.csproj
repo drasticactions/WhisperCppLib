@@ -10,8 +10,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\WhisperCppLib.FFMpeg\WhisperCppLib.FFMpeg.csproj" />
-		<ProjectReference Include="..\WhisperCppLib\WhisperCppLib.csproj" />
+		<ProjectReference Include="..\..\WhisperCppLib.FFMpeg\WhisperCppLib.FFMpeg.csproj" />
+		<ProjectReference Include="..\..\WhisperCppLib\WhisperCppLib.csproj" />
+		<ProjectReference Include="..\WhisperCppGui\WhisperCppGui.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

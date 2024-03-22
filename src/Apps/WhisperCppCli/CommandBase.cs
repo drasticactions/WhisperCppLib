@@ -13,22 +13,11 @@ using WhisperCppLib;
 public abstract class CommandBase(ILoggerFactory loggerFactory)
 {
     /// <summary>
-    /// Gets or sets the Whisper model.
-    /// </summary>
-    [CliOption(Description = "Whisper model")]
-    required public string Model { get; set; }
-
-    /// <summary>
-    /// Gets or sets the Input File.
-    /// </summary>
-    [CliOption(Description = "Input File")]
-    required public string InputFile { get; set; }
-
-    /// <summary>
     /// Run the command.
     /// </summary>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-    public virtual async Task RunAsync()
+    public virtual Task RunAsync()
     {
+        return Task.CompletedTask;
     }
 }

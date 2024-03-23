@@ -135,7 +135,7 @@ public class RootCommand
     /// </summary>
     [CliCommand(Description = "Infer from a file")]
 #pragma warning disable CS9107 // パラメーターは外側の型の状態にキャプチャされ、その値も基底コンストラクターに渡されます。この値は、基底クラスでもキャプチャされる可能性があります。
-    public class InferCommand(ILoggerFactory loggerFactory) : CommandBase(loggerFactory)
+    public class InferCommand(WhisperModelService modelService, IAppDispatcher dispatcher, ILoggerFactory loggerFactory) : CommandBase(loggerFactory)
 #pragma warning restore CS9107 // パラメーターは外側の型の状態にキャプチャされ、その値も基底コンストラクターに渡されます。この値は、基底クラスでもキャプチャされる可能性があります。
     {
         /// <summary>
@@ -331,6 +331,18 @@ public class RootCommand
         required public string Model { get; set; }
 
         /// <summary>
+        /// Gets or sets the GGML Type..
+        /// </summary>
+        [CliOption(Description = "GGML Type")]
+        public GgmlType GgmlType { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Quantization Type.
+        /// </summary>
+        [CliOption(Description = "Quantization Type")]
+        public QuantizationType QuantizationType { get; set; }
+
+        /// <summary>
         /// Gets or sets the Input File.
         /// </summary>
         [CliOption(Description = "Input File")]
@@ -343,6 +355,18 @@ public class RootCommand
         public override async Task RunAsync()
         {
             var logger = loggerFactory.CreateLogger<InferCommand>();
+
+            if (this.GgmlType != GgmlType.Unknown)
+            {
+                var model = new WhisperModel(this.GgmlType, this.QuantizationType);
+                if (!File.Exists(model.FileLocation))
+                {
+                    throw new Exception("Model not available.");
+                }
+
+                this.Model = model.FileLocation;
+            }
+
             var options = new WhisperProcessorOptions()
             {
                 AudioContextSize = this.AudioContextSize,

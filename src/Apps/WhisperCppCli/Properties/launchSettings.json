@@ -2,7 +2,7 @@
   "profiles": {
     "WhisperCppCli": {
       "commandName": "Project",
-      "commandLineArgs": "model list"
+      "commandLineArgs": "model download"
     }
   }
 }

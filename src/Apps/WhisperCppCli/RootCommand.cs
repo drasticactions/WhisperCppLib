@@ -3,7 +3,9 @@
 // </copyright>
 
 using DotMake.CommandLine;
+using Drastic.Services;
 using Microsoft.Extensions.Logging;
+using WhisperCppGui.Models;
 using WhisperCppGui.Services;
 using WhisperCppLib;
 
@@ -22,20 +24,108 @@ public class RootCommand
         /// <summary>
         /// Model Command.
         /// </summary>
-        [CliCommand(Description = "List Models")]
-        public class ListCommand(WhisperModelService modelService, ILoggerFactory loggerFactory) : CommandBase(loggerFactory)
+        [CliCommand(Description = "List All Models")]
+        public class ListAllCommand(WhisperModelService modelService, ILoggerFactory loggerFactory) : CommandBase(loggerFactory)
         {
+            /// <summary>
+            /// Run the command.
+            /// </summary>
+            /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+            public override Task RunAsync()
+            {
+                var logger = loggerFactory.CreateLogger<ListAllCommand>();
+                foreach (var model in modelService.AllModels)
+                {
+                    logger.LogInformation($"{model.Type}: {model.Name}");
+                }
+
+                return Task.CompletedTask;
+            }
+        }
+
+        /// <summary>
+        /// Model Command.
+        /// </summary>
+        [CliCommand(Description = "List Available Models")]
+        public class ListAvailableCommand(WhisperModelService modelService, ILoggerFactory loggerFactory) : CommandBase(loggerFactory)
+        {
+            /// <summary>
+            /// Run the command.
+            /// </summary>
+            /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+            public override Task RunAsync()
+            {
+                var logger = loggerFactory.CreateLogger<ListAvailableCommand>();
+                var models = modelService.AvailableModels;
+
+                if (models.Count == 0)
+                {
+                    logger.LogInformation("No models available.");
+                    return Task.CompletedTask;
+                }
+
+                foreach (var model in models)
+                {
+                    logger.LogInformation($"{model.Type}: {model.Name}");
+                }
+
+                return Task.CompletedTask;
+            }
+        }
+
+        /// <summary>
+        /// Model Command.
+        /// </summary>
+        [CliCommand(Description = "Download Models")]
+        public class DownloadCommand(WhisperModelService modelService, IAppDispatcher dispatcher, ILoggerFactory loggerFactory) : CommandBase(loggerFactory)
+        {
+            /// <summary>
+            /// Gets or sets the number of threads.
+            /// </summary>
+            [CliOption(Description = "GGML Type")]
+            public GgmlType GgmlType { get; set; }
+
+            /// <summary>
+            /// Gets or sets the number of threads.
+            /// </summary>
+            [CliOption(Description = "Quantization Type")]
+            public QuantizationType QuantizationType { get; set; }
+
             /// <summary>
             /// Run the command.
             /// </summary>
             /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
             public override async Task RunAsync()
             {
-                var logger = loggerFactory.CreateLogger<ListCommand>();
-                foreach (var model in modelService.AllModels)
+                var model = modelService.AllModels.FirstOrDefault(x => x.GgmlType == this.GgmlType && x.QuantizationType == this.QuantizationType);
+                if (model == null)
                 {
-                    logger.LogInformation($"{model.Type}: {model.Name}");
+                    throw new Exception("Model not available.");
                 }
+
+                var logger = loggerFactory.CreateLogger<DownloadCommand>();
+
+                var download = new WhisperDownload(model, modelService, dispatcher);
+                if (File.Exists(download.Model.FileLocation))
+                {
+                    logger.LogInformation("Model already downloaded.");
+                    return;
+                }
+
+                download.DownloadService.DownloadStarted += (s, e) =>
+                {
+                    logger.LogInformation($"Download Started: {e.FileName}");
+                };
+                download.DownloadService.DownloadProgressChanged += (s, e) =>
+                {
+                    logger.LogInformation($"Download Progress: {e.ProgressPercentage}");
+                };
+                download.DownloadService.DownloadFileCompleted += (s, e) =>
+                {
+                    logger.LogInformation($"Download Completed");
+                };
+
+                await download.DownloadCommand.ExecuteAsync();
             }
         }
     }

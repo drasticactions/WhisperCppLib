@@ -30,16 +30,27 @@ namespace WhisperCppLib
         {
             string[] subtitleLines = Regex.Split(subtitle, @"^\s*$", RegexOptions.Multiline);
 
-            foreach (string subtitleLine in subtitleLines)
+            for (var index = 0; index < subtitleLines.Length; index++)
             {
+                var subtitleLine = subtitleLines[index];
                 string subtitleLineTrimmed = subtitleLine.Trim();
                 SrtSubtitleLine block = new SrtSubtitleLine(subtitleLineTrimmed);
-                Lines.Add(block);
+                block.LineNumber = index + 1;
+                this.Lines.Add(block);
             }
         }
 
         /// <inheritdoc/>
         public List<ISubtitleLine> Lines { get; set; } = new List<ISubtitleLine>();
+
+        public void AddLine(ISubtitleLine line)
+        {
+            if (line is SrtSubtitleLine srtLine)
+            {
+                srtLine.LineNumber = this.Lines.Count + 1;
+                this.Lines.Add(srtLine);
+            }
+        }
 
         /// <inheritdoc/>
         public override string ToString()

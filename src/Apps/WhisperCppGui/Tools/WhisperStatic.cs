@@ -26,7 +26,7 @@ public static class WhisperStatic
     {
         var subdirectory = GetQuantizationSubdirectory(quantizationType);
         var modelName = type.ToFilename();
-        return $"https://huggingface.co/sandrohanea/whisper.net/resolve/v1/{subdirectory}/{modelName}";
+        return $"https://huggingface.co/sandrohanea/whisper.net/resolve/main/{subdirectory}/{modelName}";
     }
 
     /// <summary>

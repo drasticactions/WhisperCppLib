@@ -2,6 +2,7 @@
 // Copyright (c) Drastic Actions. All rights reserved.
 // </copyright>
 
+using System.Diagnostics;
 using DotMake.CommandLine;
 using Drastic.Services;
 using Microsoft.Extensions.Logging;
@@ -102,33 +103,23 @@ public class RootCommand
                 var model = modelService.AllModels.FirstOrDefault(x => x.GgmlType == this.GgmlType && x.QuantizationType == this.QuantizationType);
                 if (model == null)
                 {
-                    throw new Exception("Model not available.");
+                    AnsiConsole.MarkupLine("[red]Model not available.[/]");
+                    return;
                 }
-
-                var logger = loggerFactory.CreateLogger<DownloadCommand>();
 
                 var download = new WhisperDownload(model, modelService, dispatcher);
                 if (File.Exists(download.Model.FileLocation))
                 {
-                    AnsiConsole.Console.Write("Model already downloaded.");
-                    logger.LogDebug("Model already downloaded.");
+                    AnsiConsole.MarkupLine("[red]Model already downloaded.[/]");
                     return;
                 }
 
                 await AnsiConsole.Progress().StartAsync(async ctx =>
                 {
                     var downloadTask = ctx.AddTask($"[green]Downloading {model.Name}[/]");
-                    download.DownloadService.DownloadStarted += (s, e) =>
-                    {
-                        logger.LogDebug($"Download Started: {e.FileName}");
-                    };
                     download.DownloadService.DownloadProgressChanged += (s, e) =>
                     {
                         downloadTask.Value(e.ProgressPercentage);
-                    };
-                    download.DownloadService.DownloadFileCompleted += (s, e) =>
-                    {
-                        logger.LogDebug($"Download Completed");
                     };
 
                     await download.DownloadCommand.ExecuteAsync();
@@ -203,7 +194,7 @@ public class RootCommand
         /// Gets or sets a value indicating whether the results should be printed after processing.
         /// </summary>
         [CliOption(Description = "Print the complete results.")]
-        public bool? PrintResults { get; set; }
+        public bool PrintResults { get; set; } = true;
 
         /// <summary>
         /// Gets or sets a value indicating whether the timestamps should be printed in the output.
@@ -332,9 +323,15 @@ public class RootCommand
         public bool ComputeProbabilities { get; set; } = false;
 
         /// <summary>
+        /// Gets or sets a value indicating whether to output as a SRT file.
+        /// </summary>
+        [CliOption(Description = "Output SRT.")]
+        public bool OutputSrt { get; set; } = true;
+
+        /// <summary>
         /// Gets or sets the Whisper model.
         /// </summary>
-        [CliOption(Description = "Whisper model")]
+        [CliOption(Description = "Whisper model", Required = false)]
         public string? Model { get; set; }
 
         /// <summary>
@@ -362,12 +359,13 @@ public class RootCommand
         public override async Task RunAsync()
         {
             var logger = loggerFactory.CreateLogger<InferCommand>();
+            WhisperModel? model = null;
             if (string.IsNullOrEmpty(this.Model))
             {
-                var model = new WhisperModel(this.GgmlType, this.QuantizationType);
+                model = new WhisperModel(this.GgmlType, this.QuantizationType);
                 if (!File.Exists(model.FileLocation))
                 {
-                    AnsiConsole.Console.Write("[red]Model not available.");
+                    AnsiConsole.Markup("[red]Model not available.[/]");
                     return;
                 }
 
@@ -376,9 +374,11 @@ public class RootCommand
 
             if (string.IsNullOrEmpty(this.Model) || !File.Exists(this.Model))
             {
-                AnsiConsole.Console.Write("[red]Model not available.");
+                AnsiConsole.Markup("[red]Model not available.[/]");
                 return;
             }
+
+            var modelName = model?.Name ?? Path.GetFileNameWithoutExtension(this.Model);
 
             var options = new WhisperProcessorOptions()
             {
@@ -418,7 +418,10 @@ public class RootCommand
             var output = await ffmpeg.ProcessFile(this.InputFile);
             await using var whisperProcessor = new WhisperProcessor(new WhisperProcessorModelFileLoader(this.Model), options);
             await using var stream = File.OpenRead(output);
+            var stopwatch = new Stopwatch();
             var result = whisperProcessor.ProcessAsync(stream);
+            stopwatch.Start();
+            var srt = new SrtSubtitle();
             await foreach (var item in result)
             {
                 var text = $"{item.Text.Trim()}";
@@ -426,7 +429,25 @@ public class RootCommand
                 {
                     text = $"{text} [Speaker Turn]";
                 }
+
+                srt.AddLine(new SrtSubtitleLine()
+                {
+                    Start = item.Start,
+                    End = item.End,
+                    Text = text,
+                });
             }
+
+            stopwatch.Stop();
+
+            if (this.OutputSrt)
+            {
+                var srtFile = Path.ChangeExtension($"{Path.GetFileNameWithoutExtension(this.InputFile)}-{modelName}.srt", ".srt");
+                await File.WriteAllTextAsync(srtFile, srt.ToString());
+                AnsiConsole.MarkupLine($"[green]SRT File written to {srtFile}[/]");
+            }
+
+            AnsiConsole.MarkupLine($"[green]Processing took {stopwatch.ElapsedMilliseconds}ms[/]");
         }
     }
 }

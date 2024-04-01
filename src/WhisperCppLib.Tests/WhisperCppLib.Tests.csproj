@@ -5,6 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<PublishAot>false</PublishAot>
+		<EnableMSTestRunner>true</EnableMSTestRunner>
 		<NativeLibraries>ON</NativeLibraries>
 		<IsPackable>false</IsPackable>
 		<IsTestProject>true</IsTestProject>
@@ -13,12 +14,6 @@
 	<PropertyGroup>
 		<RunSettingsFilePath>$(MSBuildProjectDirectory)\whisper.runsettings</RunSettingsFilePath>
 	</PropertyGroup>
-	
-	<ItemGroup>
-	  <Content Include="..\..\external\whisper.cpp\samples\jfk.wav" Link="jfk.wav">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="MSTest" />
@@ -32,6 +27,19 @@
 
 	<ItemGroup>
 		<Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="samples\yks.mp3">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="..\..\external\whisper.cpp\samples\jfk.wav">
+	    <Link>samples\jfk.wav</Link>
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
 	</ItemGroup>
 
 </Project>

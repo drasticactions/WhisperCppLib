@@ -325,9 +325,51 @@ public static class WhisperCppInterop
 [StructLayout(LayoutKind.Sequential)]
 public struct WhisperContextParams
 {
-    [MarshalAs(UnmanagedType.U1)]
-    public bool UseGpu;
-    public int GpuDevice;
+    [MarshalAs(UnmanagedType.I1)]
+    public bool use_gpu;
+    public int gpu_device; // CUDA device
+
+    // [EXPERIMENTAL] Token-level timestamps with DTW
+    [MarshalAs(UnmanagedType.I1)]
+    public bool dtw_token_timestamps;
+    public WhisperAlignmentHeadsPreset dtw_aheads_preset;
+
+    public int dtw_n_top;
+    public WhisperAheads dtw_aheads;
+
+    public UIntPtr dtw_mem_size; // Using UIntPtr for size_t mapping
+}
+
+public enum WhisperAlignmentHeadsPreset
+{
+    WHISPER_AHEADS_NONE,
+    WHISPER_AHEADS_N_TOP_MOST, // All heads from the N-top-most text-layers
+    WHISPER_AHEADS_CUSTOM,
+    WHISPER_AHEADS_TINY_EN,
+    WHISPER_AHEADS_TINY,
+    WHISPER_AHEADS_BASE_EN,
+    WHISPER_AHEADS_BASE,
+    WHISPER_AHEADS_SMALL_EN,
+    WHISPER_AHEADS_SMALL,
+    WHISPER_AHEADS_MEDIUM_EN,
+    WHISPER_AHEADS_MEDIUM,
+    WHISPER_AHEADS_LARGE_V1,
+    WHISPER_AHEADS_LARGE_V2,
+    WHISPER_AHEADS_LARGE_V3,
+}
+
+[StructLayout(LayoutKind.Sequential)]
+public struct WhisperAhead
+{
+    public int n_text_layer;
+    public int n_head;
+}
+
+[StructLayout(LayoutKind.Sequential)]
+public struct WhisperAheads
+{
+    public UIntPtr n_heads; // size_t is mapped to UIntPtr for platform compatibility
+    public IntPtr heads; // Pointing to the first element of an array of WhisperAhead structs
 }
 
 public enum WhisperSamplingStrategy

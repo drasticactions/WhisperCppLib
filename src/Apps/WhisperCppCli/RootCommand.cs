@@ -328,7 +328,7 @@ public class RootCommand
         /// Gets or sets the Whisper model.
         /// </summary>
         [CliOption(Description = "Whisper model")]
-        required public string Model { get; set; }
+        public string? Model { get; set; }
 
         /// <summary>
         /// Gets or sets the GGML Type..
@@ -365,6 +365,12 @@ public class RootCommand
                 }
 
                 this.Model = model.FileLocation;
+            }
+
+            if (string.IsNullOrEmpty(this.Model))
+            {
+                throw new Exception("Model not available.");
+                return;
             }
 
             var options = new WhisperProcessorOptions()

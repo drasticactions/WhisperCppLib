@@ -17,7 +17,7 @@ public class JfkSampleTest
         modelPath = (string?)context.Properties["whisperModelLocation"] ?? string.Empty;
         if (string.IsNullOrEmpty(modelPath))
         {
-            throw new InvalidOperationException("Whisper model location not found.");
+            throw new InvalidOperationException("Whisper model location not found");
         }
     }
 
@@ -26,7 +26,7 @@ public class JfkSampleTest
     {
         await using var whisper =
             new WhisperProcessor(new WhisperProcessorModelFileLoader(modelPath), new WhisperProcessorOptions());
-        var stream = File.OpenRead("jfk.wav");
+        var stream = File.OpenRead("samples/jfk.wav");
         var result = whisper.ProcessAsync(stream);
         Assert.IsNotNull(result);
         await foreach (var item in result)

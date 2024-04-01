@@ -9,18 +9,10 @@ using Microsoft.Extensions.Logging;
 using WhisperCppCli;
 using WhisperCppGui.Services;
 
-#if DEBUG
-var loggerFactory = LoggerFactory.Create(
-    builder => builder
-        .AddConsole()
-        .AddDebug()
-        .SetMinimumLevel(LogLevel.Debug));
-#else
 var loggerFactory = LoggerFactory.Create(
     builder => builder
         .AddDebug()
         .SetMinimumLevel(LogLevel.Debug));
-#endif
 
 var logger = loggerFactory.CreateLogger<RootCommand>();
 

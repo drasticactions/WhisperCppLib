@@ -10,11 +10,6 @@ namespace WhisperCppGui.Models;
 public enum GgmlType
 {
     /// <summary>
-    /// Unknown.
-    /// </summary>
-    Unknown,
-
-    /// <summary>
     /// Represents the Tiny GGML type.
     /// </summary>
     Tiny,

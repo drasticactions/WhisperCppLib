@@ -5,6 +5,7 @@
 using DotMake.CommandLine;
 using Drastic.Services;
 using Microsoft.Extensions.Logging;
+using Spectre.Console;
 using WhisperCppGui.Models;
 using WhisperCppGui.Services;
 using WhisperCppLib;
@@ -25,21 +26,22 @@ public class RootCommand
         /// Model Command.
         /// </summary>
         [CliCommand(Description = "List All Models")]
-        public class ListAllCommand(WhisperModelService modelService, ILoggerFactory loggerFactory) : CommandBase(loggerFactory)
+        public class ListAllCommand(WhisperModelService modelService)
         {
             /// <summary>
             /// Run the command.
             /// </summary>
-            /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-            public override Task RunAsync()
+            public void Run()
             {
-                var logger = loggerFactory.CreateLogger<ListAllCommand>();
+                var table = new Table();
+                table.AddColumn("Type");
+                table.AddColumn("Quantization");
                 foreach (var model in modelService.AllModels)
                 {
-                    logger.LogInformation($"{model.Type}: {model.Name}");
+                    table.AddRow(model.Name, model.QuantizationType.ToString());
                 }
 
-                return Task.CompletedTask;
+                AnsiConsole.Write(table);
             }
         }
 
@@ -47,29 +49,29 @@ public class RootCommand
         /// Model Command.
         /// </summary>
         [CliCommand(Description = "List Available Models")]
-        public class ListAvailableCommand(WhisperModelService modelService, ILoggerFactory loggerFactory) : CommandBase(loggerFactory)
+        public class ListAvailableCommand(WhisperModelService modelService)
         {
             /// <summary>
             /// Run the command.
             /// </summary>
-            /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-            public override Task RunAsync()
+            public void Run()
             {
-                var logger = loggerFactory.CreateLogger<ListAvailableCommand>();
                 var models = modelService.AvailableModels;
 
                 if (models.Count == 0)
                 {
-                    logger.LogInformation("No models available.");
-                    return Task.CompletedTask;
+                    AnsiConsole.Console.Write("No models available.");
                 }
 
+                var table = new Table();
+                table.AddColumn("Type");
+                table.AddColumn("Quantization");
                 foreach (var model in models)
                 {
-                    logger.LogInformation($"{model.Type}: {model.Name}");
+                    table.AddRow(model.Name, model.QuantizationType.ToString());
                 }
 
-                return Task.CompletedTask;
+                AnsiConsole.Write(table);
             }
         }
 
@@ -83,7 +85,7 @@ public class RootCommand
             /// Gets or sets the number of threads.
             /// </summary>
             [CliOption(Description = "GGML Type")]
-            public GgmlType GgmlType { get; set; }
+            required public GgmlType GgmlType { get; set; }
 
             /// <summary>
             /// Gets or sets the number of threads.
@@ -108,24 +110,29 @@ public class RootCommand
                 var download = new WhisperDownload(model, modelService, dispatcher);
                 if (File.Exists(download.Model.FileLocation))
                 {
-                    logger.LogInformation("Model already downloaded.");
+                    AnsiConsole.Console.Write("Model already downloaded.");
+                    logger.LogDebug("Model already downloaded.");
                     return;
                 }
 
-                download.DownloadService.DownloadStarted += (s, e) =>
+                await AnsiConsole.Progress().StartAsync(async ctx =>
                 {
-                    logger.LogInformation($"Download Started: {e.FileName}");
-                };
-                download.DownloadService.DownloadProgressChanged += (s, e) =>
-                {
-                    logger.LogInformation($"Download Progress: {e.ProgressPercentage}");
-                };
-                download.DownloadService.DownloadFileCompleted += (s, e) =>
-                {
-                    logger.LogInformation($"Download Completed");
-                };
+                    var downloadTask = ctx.AddTask($"[green]Downloading {model.Name}[/]");
+                    download.DownloadService.DownloadStarted += (s, e) =>
+                    {
+                        logger.LogDebug($"Download Started: {e.FileName}");
+                    };
+                    download.DownloadService.DownloadProgressChanged += (s, e) =>
+                    {
+                        downloadTask.Value(e.ProgressPercentage);
+                    };
+                    download.DownloadService.DownloadFileCompleted += (s, e) =>
+                    {
+                        logger.LogDebug($"Download Completed");
+                    };
 
-                await download.DownloadCommand.ExecuteAsync();
+                    await download.DownloadCommand.ExecuteAsync();
+                });
             }
         }
     }
@@ -355,21 +362,21 @@ public class RootCommand
         public override async Task RunAsync()
         {
             var logger = loggerFactory.CreateLogger<InferCommand>();
-
-            if (this.GgmlType != GgmlType.Unknown)
+            if (string.IsNullOrEmpty(this.Model))
             {
                 var model = new WhisperModel(this.GgmlType, this.QuantizationType);
                 if (!File.Exists(model.FileLocation))
                 {
-                    throw new Exception("Model not available.");
+                    AnsiConsole.Console.Write("[red]Model not available.");
+                    return;
                 }
 
                 this.Model = model.FileLocation;
             }
 
-            if (string.IsNullOrEmpty(this.Model))
+            if (string.IsNullOrEmpty(this.Model) || !File.Exists(this.Model))
             {
-                throw new Exception("Model not available.");
+                AnsiConsole.Console.Write("[red]Model not available.");
                 return;
             }
 
@@ -419,8 +426,6 @@ public class RootCommand
                 {
                     text = $"{text} [Speaker Turn]";
                 }
-
-                logger.LogInformation(text);
             }
         }
     }

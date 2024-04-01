@@ -45,7 +45,6 @@ public static class WhisperStatic
     /// <returns>The filename.</returns>
     public static string ToFilename(this GgmlType type) => type switch
     {
-        GgmlType.Unknown => "unknown",
         GgmlType.Tiny => "ggml-tiny.bin",
         GgmlType.TinyEn => "ggml-tiny.en.bin",
         GgmlType.Base => "ggml-base.bin",

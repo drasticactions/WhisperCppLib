@@ -32,7 +32,7 @@ public class WhisperModel
     {
         this.GgmlType = type;
         this.QuantizationType = quantizationType;
-        this.Name = $"{type.ToString()} - {quantizationType}";
+        this.Name = $"{type.ToString()}";
         this.Type = WhisperModelType.Standard;
         this.FileLocation = WhisperStatic.GetModelPath(type, quantizationType);
         this.DownloadUrl = type.ToDownloadUrl(quantizationType);
@@ -40,7 +40,6 @@ public class WhisperModel
         // TODO: Add descriptions
         var modelDescription = type switch
         {
-            GgmlType.Unknown => "Unknown model",
             GgmlType.Tiny => "Tiny model trained on 1.5M samples",
             GgmlType.TinyEn => "Tiny model trained on 1.5M samples (English)",
             GgmlType.Base => "Base model trained on 1.5M samples",

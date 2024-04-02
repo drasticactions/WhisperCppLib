@@ -13,7 +13,7 @@ namespace WhisperCppLib
     /// <summary>
     /// Represents an SRT subtitle.
     /// </summary>
-    public class SrtSubtitle : ISubtitle
+    public class SrtSubtitle
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="SrtSubtitle"/> class.
@@ -41,15 +41,12 @@ namespace WhisperCppLib
         }
 
         /// <inheritdoc/>
-        public List<ISubtitleLine> Lines { get; set; } = new List<ISubtitleLine>();
+        public List<SrtSubtitleLine> Lines { get; set; } = new List<SrtSubtitleLine>();
 
-        public void AddLine(ISubtitleLine line)
+        public void AddLine(SrtSubtitleLine line)
         {
-            if (line is SrtSubtitleLine srtLine)
-            {
-                srtLine.LineNumber = this.Lines.Count + 1;
-                this.Lines.Add(srtLine);
-            }
+            line.LineNumber = this.Lines.Count + 1;
+            this.Lines.Add(line);
         }
 
         /// <inheritdoc/>

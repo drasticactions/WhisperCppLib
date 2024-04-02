@@ -13,7 +13,7 @@ namespace WhisperCppLib
     /// <summary>
     /// Represents a subtitle line in SRT format.
     /// </summary>
-    public class SrtSubtitleLine : ISubtitleLine
+    public class SrtSubtitleLine
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="SrtSubtitleLine"/> class.

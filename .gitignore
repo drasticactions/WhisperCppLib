@@ -3,6 +3,7 @@
 
 whisper.runsettings
 external/Drastic.FlipperKit/build/
+bindings/NativeMethods.g.cs
 src/Frameworks
 nuget/
 .meteor/

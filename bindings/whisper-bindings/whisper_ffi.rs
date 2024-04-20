@@ -1012,7 +1012,7 @@ pub unsafe extern "C" fn csbindgen_ggml_fp32_to_fp16(
 pub unsafe extern "C" fn csbindgen_ggml_fp16_to_fp32_row(
     x: *const ggml_fp16_t,
     y: *mut f32,
-    n: c_int
+    n: i64
 )
 {
     ggml_fp16_to_fp32_row(
@@ -1026,7 +1026,7 @@ pub unsafe extern "C" fn csbindgen_ggml_fp16_to_fp32_row(
 pub unsafe extern "C" fn csbindgen_ggml_fp32_to_fp16_row(
     x: *const f32,
     y: *mut ggml_fp16_t,
-    n: c_int
+    n: i64
 )
 {
     ggml_fp32_to_fp16_row(
@@ -2749,8 +2749,7 @@ pub unsafe extern "C" fn csbindgen_ggml_mul_mat_set_prec(
 #[no_mangle]
 pub unsafe extern "C" fn csbindgen_ggml_mul_mat_id(
     ctx: *mut ggml_context,
-    as_: *const *mut ggml_tensor,
-    n_as: c_int,
+    as_: *mut ggml_tensor,
     ids: *mut ggml_tensor,
     id: c_int,
     b: *mut ggml_tensor
@@ -2759,7 +2758,6 @@ pub unsafe extern "C" fn csbindgen_ggml_mul_mat_id(
     ggml_mul_mat_id(
         ctx,
         as_,
-        n_as,
         ids,
         id,
         b
@@ -4853,9 +4851,9 @@ pub unsafe extern "C" fn csbindgen_ggml_quantize_chunk(
     type_: ggml_type,
     src: *const f32,
     dst: *mut c_void,
-    start: c_int,
-    nrows: c_int,
-    n_per_row: c_int,
+    start: i64,
+    nrows: i64,
+    n_per_row: i64,
     imatrix: *const f32
 ) -> usize
 {

@@ -1856,10 +1856,10 @@ extern "C" {
     pub fn ggml_fp32_to_fp16(x: f32) -> ggml_fp16_t;
 }
 extern "C" {
-    pub fn ggml_fp16_to_fp32_row(x: *const ggml_fp16_t, y: *mut f32, n: ::std::os::raw::c_int);
+    pub fn ggml_fp16_to_fp32_row(x: *const ggml_fp16_t, y: *mut f32, n: i64);
 }
 extern "C" {
-    pub fn ggml_fp32_to_fp16_row(x: *const f32, y: *mut ggml_fp16_t, n: ::std::os::raw::c_int);
+    pub fn ggml_fp32_to_fp16_row(x: *const f32, y: *mut ggml_fp16_t, n: i64);
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -3393,8 +3393,7 @@ extern "C" {
 extern "C" {
     pub fn ggml_mul_mat_id(
         ctx: *mut ggml_context,
-        as_: *const *mut ggml_tensor,
-        n_as: ::std::os::raw::c_int,
+        as_: *mut ggml_tensor,
         ids: *mut ggml_tensor,
         id: ::std::os::raw::c_int,
         b: *mut ggml_tensor,
@@ -5291,9 +5290,9 @@ extern "C" {
         type_: ggml_type,
         src: *const f32,
         dst: *mut ::std::os::raw::c_void,
-        start: ::std::os::raw::c_int,
-        nrows: ::std::os::raw::c_int,
-        n_per_row: ::std::os::raw::c_int,
+        start: i64,
+        nrows: i64,
+        n_per_row: i64,
         imatrix: *const f32,
     ) -> usize;
 }
@@ -5655,10 +5654,10 @@ extern "C" {
     pub fn ggml_cpu_has_matmul_int8() -> ::std::os::raw::c_int;
 }
 pub type ggml_to_float_t = ::std::option::Option<
-    unsafe extern "C" fn(x: *const ::std::os::raw::c_void, y: *mut f32, k: ::std::os::raw::c_int),
+    unsafe extern "C" fn(x: *const ::std::os::raw::c_void, y: *mut f32, k: i64),
 >;
 pub type ggml_from_float_t = ::std::option::Option<
-    unsafe extern "C" fn(x: *const f32, y: *mut ::std::os::raw::c_void, k: ::std::os::raw::c_int),
+    unsafe extern "C" fn(x: *const f32, y: *mut ::std::os::raw::c_void, k: i64),
 >;
 pub type ggml_vec_dot_t = ::std::option::Option<
     unsafe extern "C" fn(
@@ -6655,6 +6654,7 @@ pub struct whisper_full_params {
     pub debug_mode: bool,
     pub audio_ctx: ::std::os::raw::c_int,
     pub tdrz_enable: bool,
+    pub suppress_regex: *const ::std::os::raw::c_char,
     pub initial_prompt: *const ::std::os::raw::c_char,
     pub prompt_tokens: *const whisper_token,
     pub prompt_n_tokens: ::std::os::raw::c_int,
@@ -6771,7 +6771,7 @@ fn bindgen_test_layout_whisper_full_params() {
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<whisper_full_params>(),
-        256usize,
+        264usize,
         concat!("Size of: ", stringify!(whisper_full_params))
     );
     assert_eq!(
@@ -7010,8 +7010,18 @@ fn bindgen_test_layout_whisper_full_params() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).initial_prompt) as usize - ptr as usize },
+        unsafe { ::std::ptr::addr_of!((*ptr).suppress_regex) as usize - ptr as usize },
         64usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(whisper_full_params),
+            "::",
+            stringify!(suppress_regex)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).initial_prompt) as usize - ptr as usize },
+        72usize,
         concat!(
             "Offset of field: ",
             stringify!(whisper_full_params),
@@ -7021,7 +7031,7 @@ fn bindgen_test_layout_whisper_full_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).prompt_tokens) as usize - ptr as usize },
-        72usize,
+        80usize,
         concat!(
             "Offset of field: ",
             stringify!(whisper_full_params),
@@ -7031,7 +7041,7 @@ fn bindgen_test_layout_whisper_full_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).prompt_n_tokens) as usize - ptr as usize },
-        80usize,
+        88usize,
         concat!(
             "Offset of field: ",
             stringify!(whisper_full_params),
@@ -7041,7 +7051,7 @@ fn bindgen_test_layout_whisper_full_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).language) as usize - ptr as usize },
-        88usize,
+        96usize,
         concat!(
             "Offset of field: ",
             stringify!(whisper_full_params),
@@ -7051,7 +7061,7 @@ fn bindgen_test_layout_whisper_full_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).detect_language) as usize - ptr as usize },
-        96usize,
+        104usize,
         concat!(
             "Offset of field: ",
             stringify!(whisper_full_params),
@@ -7061,7 +7071,7 @@ fn bindgen_test_layout_whisper_full_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).suppress_blank) as usize - ptr as usize },
-        97usize,
+        105usize,
         concat!(
             "Offset of field: ",
             stringify!(whisper_full_params),
@@ -7071,7 +7081,7 @@ fn bindgen_test_layout_whisper_full_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).suppress_non_speech_tokens) as usize - ptr as usize },
-        98usize,
+        106usize,
         concat!(
             "Offset of field: ",
             stringify!(whisper_full_params),
@@ -7081,7 +7091,7 @@ fn bindgen_test_layout_whisper_full_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).temperature) as usize - ptr as usize },
-        100usize,
+        108usize,
         concat!(
             "Offset of field: ",
             stringify!(whisper_full_params),
@@ -7091,7 +7101,7 @@ fn bindgen_test_layout_whisper_full_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).max_initial_ts) as usize - ptr as usize },
-        104usize,
+        112usize,
         concat!(
             "Offset of field: ",
             stringify!(whisper_full_params),
@@ -7101,7 +7111,7 @@ fn bindgen_test_layout_whisper_full_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).length_penalty) as usize - ptr as usize },
-        108usize,
+        116usize,
         concat!(
             "Offset of field: ",
             stringify!(whisper_full_params),
@@ -7111,7 +7121,7 @@ fn bindgen_test_layout_whisper_full_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).temperature_inc) as usize - ptr as usize },
-        112usize,
+        120usize,
         concat!(
             "Offset of field: ",
             stringify!(whisper_full_params),
@@ -7121,7 +7131,7 @@ fn bindgen_test_layout_whisper_full_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).entropy_thold) as usize - ptr as usize },
-        116usize,
+        124usize,
         concat!(
             "Offset of field: ",
             stringify!(whisper_full_params),
@@ -7131,7 +7141,7 @@ fn bindgen_test_layout_whisper_full_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).logprob_thold) as usize - ptr as usize },
-        120usize,
+        128usize,
         concat!(
             "Offset of field: ",
             stringify!(whisper_full_params),
@@ -7141,7 +7151,7 @@ fn bindgen_test_layout_whisper_full_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).no_speech_thold) as usize - ptr as usize },
-        124usize,
+        132usize,
         concat!(
             "Offset of field: ",
             stringify!(whisper_full_params),
@@ -7151,7 +7161,7 @@ fn bindgen_test_layout_whisper_full_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).greedy) as usize - ptr as usize },
-        128usize,
+        136usize,
         concat!(
             "Offset of field: ",
             stringify!(whisper_full_params),
@@ -7161,7 +7171,7 @@ fn bindgen_test_layout_whisper_full_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).beam_search) as usize - ptr as usize },
-        132usize,
+        140usize,
         concat!(
             "Offset of field: ",
             stringify!(whisper_full_params),
@@ -7171,7 +7181,7 @@ fn bindgen_test_layout_whisper_full_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).new_segment_callback) as usize - ptr as usize },
-        144usize,
+        152usize,
         concat!(
             "Offset of field: ",
             stringify!(whisper_full_params),
@@ -7183,7 +7193,7 @@ fn bindgen_test_layout_whisper_full_params() {
         unsafe {
             ::std::ptr::addr_of!((*ptr).new_segment_callback_user_data) as usize - ptr as usize
         },
-        152usize,
+        160usize,
         concat!(
             "Offset of field: ",
             stringify!(whisper_full_params),
@@ -7193,7 +7203,7 @@ fn bindgen_test_layout_whisper_full_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).progress_callback) as usize - ptr as usize },
-        160usize,
+        168usize,
         concat!(
             "Offset of field: ",
             stringify!(whisper_full_params),
@@ -7203,7 +7213,7 @@ fn bindgen_test_layout_whisper_full_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).progress_callback_user_data) as usize - ptr as usize },
-        168usize,
+        176usize,
         concat!(
             "Offset of field: ",
             stringify!(whisper_full_params),
@@ -7213,7 +7223,7 @@ fn bindgen_test_layout_whisper_full_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).encoder_begin_callback) as usize - ptr as usize },
-        176usize,
+        184usize,
         concat!(
             "Offset of field: ",
             stringify!(whisper_full_params),
@@ -7225,7 +7235,7 @@ fn bindgen_test_layout_whisper_full_params() {
         unsafe {
             ::std::ptr::addr_of!((*ptr).encoder_begin_callback_user_data) as usize - ptr as usize
         },
-        184usize,
+        192usize,
         concat!(
             "Offset of field: ",
             stringify!(whisper_full_params),
@@ -7235,7 +7245,7 @@ fn bindgen_test_layout_whisper_full_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).abort_callback) as usize - ptr as usize },
-        192usize,
+        200usize,
         concat!(
             "Offset of field: ",
             stringify!(whisper_full_params),
@@ -7245,7 +7255,7 @@ fn bindgen_test_layout_whisper_full_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).abort_callback_user_data) as usize - ptr as usize },
-        200usize,
+        208usize,
         concat!(
             "Offset of field: ",
             stringify!(whisper_full_params),
@@ -7255,7 +7265,7 @@ fn bindgen_test_layout_whisper_full_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).logits_filter_callback) as usize - ptr as usize },
-        208usize,
+        216usize,
         concat!(
             "Offset of field: ",
             stringify!(whisper_full_params),
@@ -7267,7 +7277,7 @@ fn bindgen_test_layout_whisper_full_params() {
         unsafe {
             ::std::ptr::addr_of!((*ptr).logits_filter_callback_user_data) as usize - ptr as usize
         },
-        216usize,
+        224usize,
         concat!(
             "Offset of field: ",
             stringify!(whisper_full_params),
@@ -7277,7 +7287,7 @@ fn bindgen_test_layout_whisper_full_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).grammar_rules) as usize - ptr as usize },
-        224usize,
+        232usize,
         concat!(
             "Offset of field: ",
             stringify!(whisper_full_params),
@@ -7287,7 +7297,7 @@ fn bindgen_test_layout_whisper_full_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).n_grammar_rules) as usize - ptr as usize },
-        232usize,
+        240usize,
         concat!(
             "Offset of field: ",
             stringify!(whisper_full_params),
@@ -7297,7 +7307,7 @@ fn bindgen_test_layout_whisper_full_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).i_start_rule) as usize - ptr as usize },
-        240usize,
+        248usize,
         concat!(
             "Offset of field: ",
             stringify!(whisper_full_params),
@@ -7307,7 +7317,7 @@ fn bindgen_test_layout_whisper_full_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).grammar_penalty) as usize - ptr as usize },
-        248usize,
+        256usize,
         concat!(
             "Offset of field: ",
             stringify!(whisper_full_params),

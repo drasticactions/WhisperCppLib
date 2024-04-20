@@ -9,7 +9,7 @@ fn main() {
         .rust_file_header("use super::whisper::*;")     // import bindgen generated modules(struct/method)
         .csharp_dll_name("whisper")
         .csharp_namespace("WhisperCppLib")
-        .generate_to_file("whisper_ffi.rs", "../../src/WhisperCppLib/NativeMethods.g.cs")
+        .generate_to_file("whisper_ffi.rs", "../NativeMethods.g.cs")
         .unwrap();
 }
 

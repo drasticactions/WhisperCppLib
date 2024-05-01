@@ -325,19 +325,13 @@ public static class WhisperCppInterop
 [StructLayout(LayoutKind.Sequential)]
 public struct WhisperContextParams
 {
-    [MarshalAs(UnmanagedType.I1)]
-    public bool use_gpu;
-    public int gpu_device; // CUDA device
-
-    // [EXPERIMENTAL] Token-level timestamps with DTW
-    [MarshalAs(UnmanagedType.I1)]
-    public bool dtw_token_timestamps;
-    public WhisperAlignmentHeadsPreset dtw_aheads_preset;
-
+    [MarshalAs(UnmanagedType.U1)] public bool use_gpu;
+    public int gpu_device;
+    [MarshalAs(UnmanagedType.U1)] public bool dtw_token_timestamps;
+    public uint dtw_aheads_preset;
     public int dtw_n_top;
     public WhisperAheads dtw_aheads;
-
-    public UIntPtr dtw_mem_size; // Using UIntPtr for size_t mapping
+    public nuint dtw_mem_size;
 }
 
 public enum WhisperAlignmentHeadsPreset
@@ -477,6 +471,8 @@ public struct WhisperFullParams
     // enable tinydiarize speaker turn detection
     public byte TinyDiarizeSpeakerTurnDirection;
 
+    public IntPtr SuppressRegex;
+
     public IntPtr InitialPrompt;
 
     // tokens to provide to the whisper decoder as initial prompt
@@ -533,7 +529,11 @@ public struct WhisperFullParams
     public IntPtr OnEncoderBegin;
 
     public IntPtr OnEncoderBeginUserData;
+    
+    public IntPtr AbortCallback;
 
+    public IntPtr AbortCallbackUserData;
+    
     public IntPtr LogitsFilterCallback;
 
     public IntPtr LogitsFilterCallbackData;

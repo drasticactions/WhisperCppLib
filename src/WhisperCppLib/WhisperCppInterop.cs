@@ -259,18 +259,6 @@ public static class WhisperCppInterop
     public static extern int whisper_pcm_to_mel_with_state(IntPtr context, IntPtr state, IntPtr samples, int nSamples, int nThreads);
 
     /// <summary>
-    /// Converts PCM audio to mel spectrogram using the Whisper context and state with phase vocoder.
-    /// </summary>
-    /// <param name="context">The Whisper context.</param>
-    /// <param name="state">The Whisper state.</param>
-    /// <param name="samples">The audio samples.</param>
-    /// <param name="nSamples">The number of audio samples.</param>
-    /// <param name="nThreads">The number of threads.</param>
-    /// <returns>The status code.</returns>
-    [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    public static extern int whisper_pcm_to_mel_phase_vocoder_with_state(IntPtr context, IntPtr state, IntPtr samples, int nSamples, int nThreads);
-
-    /// <summary>
     /// Gets the language string for the specified language ID.
     /// </summary>
     /// <param name="lang_id">The language ID.</param>
@@ -455,11 +443,6 @@ public struct WhisperFullParams
 
     // max tokens per segment (0 = no limit)
     public int MaxTokensPerSegment;
-
-    // [EXPERIMENTAL] speed-up techniques
-    // note: these can significantly reduce the quality of the output
-    // speed-up the audio by 2x using Phase Vocoder
-    public byte SpeedUp2x;
 
     // enable debug_mode provides extra info (eg. Dump log_mel)
     public byte DebugMode;

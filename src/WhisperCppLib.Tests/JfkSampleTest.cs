@@ -2,6 +2,8 @@
 // Copyright (c) Drastic Actions. All rights reserved.
 // </copyright>
 
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 [assembly: ClassCleanupExecution(ClassCleanupBehavior.EndOfClass)]
 
 namespace WhisperCppLib.Tests;

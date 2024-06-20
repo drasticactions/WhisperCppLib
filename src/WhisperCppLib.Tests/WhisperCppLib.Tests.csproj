@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="MSTest.Sdk/3.4.3">
 
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
@@ -16,17 +16,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="MSTest" />
-		<PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<ProjectReference Include="..\WhisperCppLib.FFMpeg\WhisperCppLib.FFMpeg.csproj" />
 		<ProjectReference Include="..\WhisperCppLib\WhisperCppLib.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -40,6 +31,18 @@
 	    <Link>samples\jfk.wav</Link>
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Update="Microsoft.NET.Test.Sdk" VersionOverride="17.10.0" />
+	  <PackageReference Update="MSTest.TestAdapter" VersionOverride="3.4.3" />
+	  <PackageReference Update="MSTest.TestFramework" VersionOverride="3.4.3" />
+	  <PackageReference Update="MSTest.Analyzers" VersionOverride="3.4.3">
+	    <PrivateAssets>all</PrivateAssets>
+	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
+	  <PackageReference Update="Microsoft.Testing.Extensions.TrxReport" VersionOverride="1.2.1" />
+	  <PackageReference Update="Microsoft.Testing.Extensions.CodeCoverage" VersionOverride="17.11.3" />
 	</ItemGroup>
 
 </Project>

@@ -100,11 +100,6 @@ public class WhisperProcessorOptions
     public int? MaxTokensPerSegment { get; set; }
 
     /// <summary>
-    /// Gets or sets a value indicating whether the processing should be speeded up by 2x.
-    /// </summary>
-    public bool? SpeedUp2x { get; set; }
-
-    /// <summary>
     /// Gets or sets a value indicating whether the tiny diarization speaker turn direction should be used.
     /// </summary>
     public bool? TinyDiarizeSpeakerTurnDirection { get; set; }

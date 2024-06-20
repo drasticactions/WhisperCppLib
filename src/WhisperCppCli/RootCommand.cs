@@ -239,12 +239,6 @@ public class RootCommand
         public int? MaxTokensPerSegment { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the processing should be speeded up by 2x.
-        /// </summary>
-        [CliOption(Description = "Speed up processing by 2x.")]
-        public bool? SpeedUp2x { get; set; }
-
-        /// <summary>
         /// Gets or sets a value indicating whether the tiny diarization speaker turn direction should be used.
         /// </summary>
         [CliOption(Description = "Enable diarization for speaker turn direction. Requires TinyDiarize model.")]
@@ -402,7 +396,6 @@ public class RootCommand
                 PrintTimestamps = this.PrintTimestamps,
                 Prompt = this.Prompt,
                 SingleSegment = this.SingleSegment,
-                SpeedUp2x = this.SpeedUp2x,
                 SplitOnWord = this.SplitOnWord,
                 SuppressBlank = this.SuppressBlank,
                 Temperature = this.Temperature,

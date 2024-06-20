@@ -990,49 +990,97 @@ pub unsafe extern "C" fn csbindgen_ggml_status_to_string(
 
 #[no_mangle]
 pub unsafe extern "C" fn csbindgen_ggml_fp16_to_fp32(
-    x: ggml_fp16_t
+    arg1: ggml_fp16_t
 ) -> f32
 {
     ggml_fp16_to_fp32(
-        x
+        arg1
     )
 }
 
 #[no_mangle]
 pub unsafe extern "C" fn csbindgen_ggml_fp32_to_fp16(
-    x: f32
+    arg1: f32
 ) -> ggml_fp16_t
 {
     ggml_fp32_to_fp16(
-        x
+        arg1
     )
 }
 
 #[no_mangle]
 pub unsafe extern "C" fn csbindgen_ggml_fp16_to_fp32_row(
-    x: *const ggml_fp16_t,
-    y: *mut f32,
-    n: i64
+    arg1: *const ggml_fp16_t,
+    arg2: *mut f32,
+    arg3: i64
 )
 {
     ggml_fp16_to_fp32_row(
-        x,
-        y,
-        n
+        arg1,
+        arg2,
+        arg3
     )
 }
 
 #[no_mangle]
 pub unsafe extern "C" fn csbindgen_ggml_fp32_to_fp16_row(
-    x: *const f32,
-    y: *mut ggml_fp16_t,
-    n: i64
+    arg1: *const f32,
+    arg2: *mut ggml_fp16_t,
+    arg3: i64
 )
 {
     ggml_fp32_to_fp16_row(
-        x,
-        y,
-        n
+        arg1,
+        arg2,
+        arg3
+    )
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn csbindgen_ggml_fp32_to_bf16(
+    arg1: f32
+) -> ggml_bf16_t
+{
+    ggml_fp32_to_bf16(
+        arg1
+    )
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn csbindgen_ggml_bf16_to_fp32(
+    arg1: ggml_bf16_t
+) -> f32
+{
+    ggml_bf16_to_fp32(
+        arg1
+    )
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn csbindgen_ggml_bf16_to_fp32_row(
+    arg1: *const ggml_bf16_t,
+    arg2: *mut f32,
+    arg3: i64
+)
+{
+    ggml_bf16_to_fp32_row(
+        arg1,
+        arg2,
+        arg3
+    )
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn csbindgen_ggml_fp32_to_bf16_row(
+    arg1: *const f32,
+    arg2: *mut ggml_bf16_t,
+    arg3: i64
+)
+{
+    ggml_fp32_to_bf16_row(
+        arg1,
+        arg2,
+        arg3
     )
 }
 
@@ -1333,16 +1381,6 @@ pub unsafe extern "C" fn csbindgen_ggml_is_transposed(
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn csbindgen_ggml_is_contiguous(
-    tensor: *const ggml_tensor
-) -> bool
-{
-    ggml_is_contiguous(
-        tensor
-    )
-}
-
-#[no_mangle]
 pub unsafe extern "C" fn csbindgen_ggml_is_permuted(
     tensor: *const ggml_tensor
 ) -> bool
@@ -1413,6 +1451,46 @@ pub unsafe extern "C" fn csbindgen_ggml_n_dims(
 }
 
 #[no_mangle]
+pub unsafe extern "C" fn csbindgen_ggml_is_contiguous(
+    tensor: *const ggml_tensor
+) -> bool
+{
+    ggml_is_contiguous(
+        tensor
+    )
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn csbindgen_ggml_is_contiguous_0(
+    tensor: *const ggml_tensor
+) -> bool
+{
+    ggml_is_contiguous_0(
+        tensor
+    )
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn csbindgen_ggml_is_contiguous_1(
+    tensor: *const ggml_tensor
+) -> bool
+{
+    ggml_is_contiguous_1(
+        tensor
+    )
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn csbindgen_ggml_is_contiguous_2(
+    tensor: *const ggml_tensor
+) -> bool
+{
+    ggml_is_contiguous_2(
+        tensor
+    )
+}
+
+#[no_mangle]
 pub unsafe extern "C" fn csbindgen_ggml_are_same_shape(
     t0: *const ggml_tensor,
     t1: *const ggml_tensor
@@ -1425,12 +1503,38 @@ pub unsafe extern "C" fn csbindgen_ggml_are_same_shape(
 }
 
 #[no_mangle]
+pub unsafe extern "C" fn csbindgen_ggml_are_same_stride(
+    t0: *const ggml_tensor,
+    t1: *const ggml_tensor
+) -> bool
+{
+    ggml_are_same_stride(
+        t0,
+        t1
+    )
+}
+
+#[no_mangle]
 pub unsafe extern "C" fn csbindgen_ggml_tensor_overhead(
 
 ) -> usize
 {
     ggml_tensor_overhead(
 
+    )
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn csbindgen_ggml_validate_row_data(
+    type_: ggml_type,
+    data: *const c_void,
+    nbytes: usize
+) -> bool
+{
+    ggml_validate_row_data(
+        type_,
+        data,
+        nbytes
     )
 }
 
@@ -2316,13 +2420,15 @@ pub unsafe extern "C" fn csbindgen_ggml_repeat_back(
 pub unsafe extern "C" fn csbindgen_ggml_concat(
     ctx: *mut ggml_context,
     a: *mut ggml_tensor,
-    b: *mut ggml_tensor
+    b: *mut ggml_tensor,
+    dim: c_int
 ) -> *mut ggml_tensor
 {
     ggml_concat(
         ctx,
         a,
-        b
+        b,
+        dim
     )
 }
 
@@ -2505,6 +2611,30 @@ pub unsafe extern "C" fn csbindgen_ggml_relu_inplace(
 ) -> *mut ggml_tensor
 {
     ggml_relu_inplace(
+        ctx,
+        a
+    )
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn csbindgen_ggml_sigmoid(
+    ctx: *mut ggml_context,
+    a: *mut ggml_tensor
+) -> *mut ggml_tensor
+{
+    ggml_sigmoid(
+        ctx,
+        a
+    )
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn csbindgen_ggml_sigmoid_inplace(
+    ctx: *mut ggml_context,
+    a: *mut ggml_tensor
+) -> *mut ggml_tensor
+{
+    ggml_sigmoid_inplace(
         ctx,
         a
     )
@@ -2750,17 +2880,15 @@ pub unsafe extern "C" fn csbindgen_ggml_mul_mat_set_prec(
 pub unsafe extern "C" fn csbindgen_ggml_mul_mat_id(
     ctx: *mut ggml_context,
     as_: *mut ggml_tensor,
-    ids: *mut ggml_tensor,
-    id: c_int,
-    b: *mut ggml_tensor
+    b: *mut ggml_tensor,
+    ids: *mut ggml_tensor
 ) -> *mut ggml_tensor
 {
     ggml_mul_mat_id(
         ctx,
         as_,
-        ids,
-        id,
-        b
+        b,
+        ids
     )
 }
 
@@ -3355,7 +3483,6 @@ pub unsafe extern "C" fn csbindgen_ggml_soft_max_ext(
     ctx: *mut ggml_context,
     a: *mut ggml_tensor,
     mask: *mut ggml_tensor,
-    pos: *mut ggml_tensor,
     scale: f32,
     max_bias: f32
 ) -> *mut ggml_tensor
@@ -3364,7 +3491,6 @@ pub unsafe extern "C" fn csbindgen_ggml_soft_max_ext(
         ctx,
         a,
         mask,
-        pos,
         scale,
         max_bias
     )
@@ -3404,8 +3530,7 @@ pub unsafe extern "C" fn csbindgen_ggml_rope(
     a: *mut ggml_tensor,
     b: *mut ggml_tensor,
     n_dims: c_int,
-    mode: c_int,
-    n_ctx: c_int
+    mode: c_int
 ) -> *mut ggml_tensor
 {
     ggml_rope(
@@ -3413,8 +3538,7 @@ pub unsafe extern "C" fn csbindgen_ggml_rope(
         a,
         b,
         n_dims,
-        mode,
-        n_ctx
+        mode
     )
 }
 
@@ -3424,8 +3548,7 @@ pub unsafe extern "C" fn csbindgen_ggml_rope_inplace(
     a: *mut ggml_tensor,
     b: *mut ggml_tensor,
     n_dims: c_int,
-    mode: c_int,
-    n_ctx: c_int
+    mode: c_int
 ) -> *mut ggml_tensor
 {
     ggml_rope_inplace(
@@ -3433,8 +3556,75 @@ pub unsafe extern "C" fn csbindgen_ggml_rope_inplace(
         a,
         b,
         n_dims,
+        mode
+    )
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn csbindgen_ggml_rope_ext(
+    ctx: *mut ggml_context,
+    a: *mut ggml_tensor,
+    b: *mut ggml_tensor,
+    c: *mut ggml_tensor,
+    n_dims: c_int,
+    mode: c_int,
+    n_ctx_orig: c_int,
+    freq_base: f32,
+    freq_scale: f32,
+    ext_factor: f32,
+    attn_factor: f32,
+    beta_fast: f32,
+    beta_slow: f32
+) -> *mut ggml_tensor
+{
+    ggml_rope_ext(
+        ctx,
+        a,
+        b,
+        c,
+        n_dims,
         mode,
-        n_ctx
+        n_ctx_orig,
+        freq_base,
+        freq_scale,
+        ext_factor,
+        attn_factor,
+        beta_fast,
+        beta_slow
+    )
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn csbindgen_ggml_rope_ext_inplace(
+    ctx: *mut ggml_context,
+    a: *mut ggml_tensor,
+    b: *mut ggml_tensor,
+    c: *mut ggml_tensor,
+    n_dims: c_int,
+    mode: c_int,
+    n_ctx_orig: c_int,
+    freq_base: f32,
+    freq_scale: f32,
+    ext_factor: f32,
+    attn_factor: f32,
+    beta_fast: f32,
+    beta_slow: f32
+) -> *mut ggml_tensor
+{
+    ggml_rope_ext_inplace(
+        ctx,
+        a,
+        b,
+        c,
+        n_dims,
+        mode,
+        n_ctx_orig,
+        freq_base,
+        freq_scale,
+        ext_factor,
+        attn_factor,
+        beta_fast,
+        beta_slow
     )
 }
 
@@ -3445,8 +3635,7 @@ pub unsafe extern "C" fn csbindgen_ggml_rope_custom(
     b: *mut ggml_tensor,
     n_dims: c_int,
     mode: c_int,
-    n_ctx: c_int,
-    n_orig_ctx: c_int,
+    n_ctx_orig: c_int,
     freq_base: f32,
     freq_scale: f32,
     ext_factor: f32,
@@ -3461,8 +3650,7 @@ pub unsafe extern "C" fn csbindgen_ggml_rope_custom(
         b,
         n_dims,
         mode,
-        n_ctx,
-        n_orig_ctx,
+        n_ctx_orig,
         freq_base,
         freq_scale,
         ext_factor,
@@ -3479,8 +3667,7 @@ pub unsafe extern "C" fn csbindgen_ggml_rope_custom_inplace(
     b: *mut ggml_tensor,
     n_dims: c_int,
     mode: c_int,
-    n_ctx: c_int,
-    n_orig_ctx: c_int,
+    n_ctx_orig: c_int,
     freq_base: f32,
     freq_scale: f32,
     ext_factor: f32,
@@ -3495,8 +3682,7 @@ pub unsafe extern "C" fn csbindgen_ggml_rope_custom_inplace(
         b,
         n_dims,
         mode,
-        n_ctx,
-        n_orig_ctx,
+        n_ctx_orig,
         freq_base,
         freq_scale,
         ext_factor,
@@ -3509,7 +3695,7 @@ pub unsafe extern "C" fn csbindgen_ggml_rope_custom_inplace(
 #[no_mangle]
 pub unsafe extern "C" fn csbindgen_ggml_rope_yarn_corr_dims(
     n_dims: c_int,
-    n_orig_ctx: c_int,
+    n_ctx_orig: c_int,
     freq_base: f32,
     beta_fast: f32,
     beta_slow: f32,
@@ -3518,7 +3704,7 @@ pub unsafe extern "C" fn csbindgen_ggml_rope_yarn_corr_dims(
 {
     ggml_rope_yarn_corr_dims(
         n_dims,
-        n_orig_ctx,
+        n_ctx_orig,
         freq_base,
         beta_fast,
         beta_slow,
@@ -3527,78 +3713,36 @@ pub unsafe extern "C" fn csbindgen_ggml_rope_yarn_corr_dims(
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn csbindgen_ggml_rope_xpos_inplace(
-    ctx: *mut ggml_context,
-    a: *mut ggml_tensor,
-    b: *mut ggml_tensor,
-    n_dims: c_int,
-    base: f32,
-    down: bool
-) -> *mut ggml_tensor
-{
-    ggml_rope_xpos_inplace(
-        ctx,
-        a,
-        b,
-        n_dims,
-        base,
-        down
-    )
-}
-
-#[no_mangle]
 pub unsafe extern "C" fn csbindgen_ggml_rope_back(
     ctx: *mut ggml_context,
     a: *mut ggml_tensor,
     b: *mut ggml_tensor,
+    c: *mut ggml_tensor,
     n_dims: c_int,
     mode: c_int,
-    n_ctx: c_int,
-    n_orig_ctx: c_int,
+    n_ctx_orig: c_int,
     freq_base: f32,
     freq_scale: f32,
     ext_factor: f32,
     attn_factor: f32,
     beta_fast: f32,
-    beta_slow: f32,
-    xpos_base: f32,
-    xpos_down: bool
+    beta_slow: f32
 ) -> *mut ggml_tensor
 {
     ggml_rope_back(
         ctx,
         a,
         b,
+        c,
         n_dims,
         mode,
-        n_ctx,
-        n_orig_ctx,
+        n_ctx_orig,
         freq_base,
         freq_scale,
         ext_factor,
         attn_factor,
         beta_fast,
-        beta_slow,
-        xpos_base,
-        xpos_down
-    )
-}
-
-#[no_mangle]
-pub unsafe extern "C" fn csbindgen_ggml_alibi(
-    ctx: *mut ggml_context,
-    a: *mut ggml_tensor,
-    n_past: c_int,
-    n_head: c_int,
-    bias_max: f32
-) -> *mut ggml_tensor
-{
-    ggml_alibi(
-        ctx,
-        a,
-        n_past,
-        n_head,
-        bias_max
+        beta_slow
     )
 }
 
@@ -3863,6 +4007,26 @@ pub unsafe extern "C" fn csbindgen_ggml_upscale(
 }
 
 #[no_mangle]
+pub unsafe extern "C" fn csbindgen_ggml_upscale_ext(
+    ctx: *mut ggml_context,
+    a: *mut ggml_tensor,
+    ne0: c_int,
+    ne1: c_int,
+    ne2: c_int,
+    ne3: c_int
+) -> *mut ggml_tensor
+{
+    ggml_upscale_ext(
+        ctx,
+        a,
+        ne0,
+        ne1,
+        ne2,
+        ne3
+    )
+}
+
+#[no_mangle]
 pub unsafe extern "C" fn csbindgen_ggml_pad(
     ctx: *mut ggml_context,
     a: *mut ggml_tensor,
@@ -3943,20 +4107,36 @@ pub unsafe extern "C" fn csbindgen_ggml_top_k(
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn csbindgen_ggml_flash_attn(
+pub unsafe extern "C" fn csbindgen_ggml_flash_attn_ext(
     ctx: *mut ggml_context,
     q: *mut ggml_tensor,
     k: *mut ggml_tensor,
     v: *mut ggml_tensor,
-    masked: bool
+    mask: *mut ggml_tensor,
+    scale: f32,
+    max_bias: f32
 ) -> *mut ggml_tensor
 {
-    ggml_flash_attn(
+    ggml_flash_attn_ext(
         ctx,
         q,
         k,
         v,
-        masked
+        mask,
+        scale,
+        max_bias
+    )
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn csbindgen_ggml_flash_attn_ext_set_prec(
+    a: *mut ggml_tensor,
+    prec: ggml_prec
+)
+{
+    ggml_flash_attn_ext_set_prec(
+        a,
+        prec
     )
 }
 
@@ -3977,26 +4157,6 @@ pub unsafe extern "C" fn csbindgen_ggml_flash_attn_back(
         v,
         d,
         masked
-    )
-}
-
-#[no_mangle]
-pub unsafe extern "C" fn csbindgen_ggml_flash_ff(
-    ctx: *mut ggml_context,
-    a: *mut ggml_tensor,
-    b0: *mut ggml_tensor,
-    b1: *mut ggml_tensor,
-    c0: *mut ggml_tensor,
-    c1: *mut ggml_tensor
-) -> *mut ggml_tensor
-{
-    ggml_flash_ff(
-        ctx,
-        a,
-        b0,
-        b1,
-        c0,
-        c1
     )
 }
 
@@ -5261,6 +5421,18 @@ pub unsafe extern "C" fn csbindgen_gguf_get_tensor_type(
 }
 
 #[no_mangle]
+pub unsafe extern "C" fn csbindgen_gguf_remove_key(
+    ctx: *mut gguf_context,
+    key: *const c_char
+)
+{
+    gguf_remove_key(
+        ctx,
+        key
+    )
+}
+
+#[no_mangle]
 pub unsafe extern "C" fn csbindgen_gguf_set_val_u8(
     ctx: *mut gguf_context,
     key: *const c_char,
@@ -5613,6 +5785,16 @@ pub unsafe extern "C" fn csbindgen_ggml_cpu_has_avx512_vnni(
 }
 
 #[no_mangle]
+pub unsafe extern "C" fn csbindgen_ggml_cpu_has_avx512_bf16(
+
+) -> c_int
+{
+    ggml_cpu_has_avx512_bf16(
+
+    )
+}
+
+#[no_mangle]
 pub unsafe extern "C" fn csbindgen_ggml_cpu_has_fma(
 
 ) -> c_int
@@ -5628,6 +5810,16 @@ pub unsafe extern "C" fn csbindgen_ggml_cpu_has_neon(
 ) -> c_int
 {
     ggml_cpu_has_neon(
+
+    )
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn csbindgen_ggml_cpu_has_sve(
+
+) -> c_int
+{
+    ggml_cpu_has_sve(
 
     )
 }
@@ -5703,16 +5895,6 @@ pub unsafe extern "C" fn csbindgen_ggml_cpu_has_cuda(
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn csbindgen_ggml_cpu_has_clblast(
-
-) -> c_int
-{
-    ggml_cpu_has_clblast(
-
-    )
-}
-
-#[no_mangle]
 pub unsafe extern "C" fn csbindgen_ggml_cpu_has_vulkan(
 
 ) -> c_int
@@ -5768,6 +5950,16 @@ pub unsafe extern "C" fn csbindgen_ggml_cpu_has_sycl(
 ) -> c_int
 {
     ggml_cpu_has_sycl(
+
+    )
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn csbindgen_ggml_cpu_has_rpc(
+
+) -> c_int
+{
+    ggml_cpu_has_rpc(
 
     )
 }
@@ -6034,40 +6226,6 @@ pub unsafe extern "C" fn csbindgen_whisper_pcm_to_mel_with_state(
 ) -> c_int
 {
     whisper_pcm_to_mel_with_state(
-        ctx,
-        state,
-        samples,
-        n_samples,
-        n_threads
-    )
-}
-
-#[no_mangle]
-pub unsafe extern "C" fn csbindgen_whisper_pcm_to_mel_phase_vocoder(
-    ctx: *mut whisper_context,
-    samples: *const f32,
-    n_samples: c_int,
-    n_threads: c_int
-) -> c_int
-{
-    whisper_pcm_to_mel_phase_vocoder(
-        ctx,
-        samples,
-        n_samples,
-        n_threads
-    )
-}
-
-#[no_mangle]
-pub unsafe extern "C" fn csbindgen_whisper_pcm_to_mel_phase_vocoder_with_state(
-    ctx: *mut whisper_context,
-    state: *mut whisper_state,
-    samples: *const f32,
-    n_samples: c_int,
-    n_threads: c_int
-) -> c_int
-{
-    whisper_pcm_to_mel_phase_vocoder_with_state(
         ctx,
         state,
         samples,

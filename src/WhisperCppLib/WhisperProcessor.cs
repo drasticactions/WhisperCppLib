@@ -95,11 +95,10 @@ public class WhisperProcessor : IAsyncDisposable, IDisposable
     /// Detects the language of the audio samples.
     /// </summary>
     /// <param name="samples">The audio samples.</param>
-    /// <param name="speedUp">Indicates whether to use the speed up mode.</param>
     /// <returns>The detected language.</returns>
-    public unsafe string? DetectLanguage(float[] samples, bool speedUp = false)
+    public unsafe string? DetectLanguage(float[] samples)
     {
-        var (language, _) = this.DetectLanguageWithProbability(samples.AsSpan(), speedUp);
+        var (language, _) = this.DetectLanguageWithProbability(samples.AsSpan());
         return language;
     }
 
@@ -107,20 +106,18 @@ public class WhisperProcessor : IAsyncDisposable, IDisposable
     /// Detects the language of the audio samples and returns the probability.
     /// </summary>
     /// <param name="samples">The audio samples.</param>
-    /// <param name="speedUp">Indicates whether to use the speed up mode.</param>
     /// <returns>The detected language and its probability.</returns>
-    public (string? language, float probability) DetectLanguageWithProbability(float[] samples, bool speedUp = false)
+    public (string? language, float probability) DetectLanguageWithProbability(float[] samples)
     {
-        return this.DetectLanguageWithProbability(samples.AsSpan(), speedUp);
+        return this.DetectLanguageWithProbability(samples.AsSpan());
     }
 
     /// <summary>
     /// Detects the language of the audio samples and returns the probability.
     /// </summary>
     /// <param name="samples">The audio samples.</param>
-    /// <param name="speedUp">Indicates whether to use the speed up mode.</param>
     /// <returns>The detected language and its probability.</returns>
-    public unsafe (string? language, float probability) DetectLanguageWithProbability(ReadOnlySpan<float> samples, bool speedUp = false)
+    public unsafe (string? language, float probability) DetectLanguageWithProbability(ReadOnlySpan<float> samples)
     {
         var probs = new float[WhisperCppInterop.whisper_lang_max_id()];
 
@@ -131,15 +128,7 @@ public class WhisperProcessor : IAsyncDisposable, IDisposable
             {
                 fixed (float* pSamples = samples)
                 {
-                    if (speedUp)
-                    {
-                        // whisper_pcm_to_mel_phase_vocoder is not yet exported from whisper.cpp
-                        WhisperCppInterop.whisper_pcm_to_mel_phase_vocoder_with_state(this.currentWhisperContext, state, (IntPtr)pSamples, samples.Length, this.whisperParams.Threads);
-                    }
-                    else
-                    {
-                        WhisperCppInterop.whisper_pcm_to_mel_with_state(this.currentWhisperContext, state, (IntPtr)pSamples, samples.Length, this.whisperParams.Threads);
-                    }
+                    WhisperCppInterop.whisper_pcm_to_mel_with_state(this.currentWhisperContext, state, (IntPtr)pSamples, samples.Length, this.whisperParams.Threads);
                 }
 
                 var langId = WhisperCppInterop.whisper_lang_auto_detect_with_state(this.currentWhisperContext, state, 0, this.whisperParams.Threads, (IntPtr)pData);
@@ -453,11 +442,6 @@ public class WhisperProcessor : IAsyncDisposable, IDisposable
         if (this.options.MaxTokensPerSegment.HasValue)
         {
             whisperParams.MaxTokensPerSegment = this.options.MaxTokensPerSegment.Value;
-        }
-
-        if (this.options.SpeedUp2x.HasValue)
-        {
-            whisperParams.SpeedUp2x = this.options.SpeedUp2x.Value ? TrueByte : FalseByte;
         }
 
         if (this.options.AudioContextSize.HasValue)
